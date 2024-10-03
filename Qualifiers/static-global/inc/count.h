@@ -2,6 +2,6 @@
 #define __COUNT_H__
 
 void count(void);
-unsigned int counter;
+extern unsigned int counter;
 
 #endif /* __COUNT_H__ */
