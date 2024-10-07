@@ -10,10 +10,25 @@ int main(void) {
 	configClock();
 	configUSART2(38400);
 	
-	queue_put(&queue, 4);
-	queue_put(&queue, 7);
-	queue_put(&queue, 2);
-	printf("Removed %" PRId32 " from queue\r\n", queue_get(&queue));
-	printf("Removed %" PRId32 " from queue\r\n", queue_get(&queue));
-	printf("Removed %" PRId32 " from queue\r\n", queue_get(&queue));
+	int32_t data = 0;
+	
+	for (int32_t i = 0; i < 12; i++) {
+		if (queue_put(&queue, i)) {
+			printf("Successfluly added %" PRId32 " to the queue\r\n", i);
+		}
+		else {
+			printf("Cannot add data, queue is full!\r\n");
+		}
+	}
+	
+	
+	for (int32_t i = 0; i < 12; i++) {
+		if (queue_get(&queue, &data)) {
+			printf("Removed %" PRId32 " from queue\r\n", data);
+		}
+		else {
+			printf("Cannot remove data, queue is empty!\r\n");
+		}
+		
+	}
 }
