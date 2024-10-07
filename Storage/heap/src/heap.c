@@ -16,6 +16,7 @@ static void heap_up(heap_t *heap) {
 	
 	int32_t * const offsetStore = heap->store - 1;
 	
+	// Use variables to keep track of current and next ones and check if root element each time
 	while (heap->store[0] != heap->store[heap->size]) {
 		n = heap->size % 2;
 		
