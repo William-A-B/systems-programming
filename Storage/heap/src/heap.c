@@ -14,7 +14,13 @@ static void heap_up(heap_t *heap) {
 	int32_t element = 0;
 	int32_t parent_element = 0;
 	
+	// Allows arrays to be 1 indexed
+	// Accessing offsetStore[0] will provide some random memory
 	int32_t * const offsetStore = heap->store - 1;
+	
+	element = heap->store[heap->size];
+	
+	
 	
 	// Use variables to keep track of current and next ones and check if root element each time
 	while (heap->store[0] != heap->store[heap->size]) {
@@ -24,6 +30,9 @@ static void heap_up(heap_t *heap) {
 		if (heap->store[0] == heap->store[heap->size]) {
 			return;
 		}
+		
+		
+		
 		
 		if (n == 0) {
 			element = heap->store[heap->size];
