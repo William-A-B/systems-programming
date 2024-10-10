@@ -12,7 +12,7 @@ int main(void) {
 	
 	int32_t data = 0;
 	
-	for (int32_t i = 0; i < 12; i++) {
+	for (int32_t i = 0; i < 9; i++) {
 		if (queue_put(&queue, i)) {
 			printf("Successfluly added %" PRId32 " to the queue\r\n", i);
 		}

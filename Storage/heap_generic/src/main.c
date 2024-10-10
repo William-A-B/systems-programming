@@ -9,13 +9,24 @@ typedef struct {
 	uint32_t priority;
 } example_item_t;
 
+static int_fast8_t compare_heap(void *item_one, void *item_two) {
+	example_item_t *ei_item_one = item_one;
+	example_item_t *ei_item_two = item_two;
+	if (ei_item_one->priority > ei_item_two->priority) {
+		return 1;
+	}	else if (ei_item_one->priority < ei_item_two->priority) {
+		return -1;
+	}
+	return 0;
+}
+
 int main(void) {
 	
 	configClock();
 	configUSART2(38400);
 	
 	void *store[20];
-	heap_t heap = HEAP_INITIALISER(store, comparator);
+	heap_t heap = HEAP_INITIALISER(store, compare_heap);
 
 	// Remember not to insert so many things that the heap overflows!
 	heap_insert(&heap, &(example_item_t){.name="first", .priority=2});

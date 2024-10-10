@@ -1,25 +1,11 @@
 #include "heap.h"
 
-static int32_t get_children_count(uint32_t heap_size, uint32_t element_index) {
-	if ((element_index*2) > heap_size) {
-		return 0;
-	}
-	else if (((element_index*2)+1) <= heap_size) {
-		return 2;
-	}
-	else if ((element_index*2) <= heap_size) {
-		return 1;
-	}
-	return 0;
-}
-
-static void swap_elements(int32_t *store, uint32_t index_one, uint32_t index_two) {
+static inline void swap_elements(int32_t *store, uint32_t index_one, uint32_t index_two) {
 	int32_t element_one = store[index_one];
 	int32_t element_two = store[index_two];
 	store[index_two] = element_one;
 	store[index_one] = element_two;
 }
-
 
 static void heap_up(heap_t *heap) {
 	// Start with the last element in the heap
@@ -80,48 +66,44 @@ static void heap_down(heap_t *heap) {
 	int32_t * const offsetStore = heap->store - 1;
 	
 	element_index = 1;
-	int32_t child_count = get_children_count(heap->size, element_index);
 	
-	while (child_count) {
+	while (1) {
 		
-		// Element is now the last element
-		if (element_index >= heap->size) {
+		child_a_index = (2*element_index);
+		child_b_index = ((2*element_index)+1);
+
+		// No children
+		if (child_a_index > heap->size) {
 			return;
 		}
 		
 		element = offsetStore[element_index];
 		
-		child_a_index = (2*element_index);
 		child_a = offsetStore[child_a_index];
 		
-		if (child_count == 2) {
-			child_b_index = ((2*element_index)+1);
+		if (child_b_index <= heap->size) {
+			// Two children
 			child_b = offsetStore[child_b_index];
 			
+			if (element <= child_a && element <= child_b) {
+				return;
+			}
+			
 			if (child_b < child_a) {
-				if (element <= child_b) {
-					return;
-				}
 				swap_elements(offsetStore, element_index, child_b_index);
 				element_index = child_b_index;
-			}
-			else {	
-				if (element <= child_a) {
-					return;
-				}
+			} else {	
 				swap_elements(offsetStore, element_index, child_a_index);
 				element_index = child_a_index;
 			}
-		}
-		else {
+		} else {
+			// One child
 			if (element <= child_a) {
 					return;
 			}
 			swap_elements(offsetStore, element_index, child_a_index);
 			element_index = child_a_index;
-		}
-		
-		child_count = get_children_count(heap->size, element_index);
+		}		
 	}
 }
 
