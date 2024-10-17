@@ -27,25 +27,21 @@ Project File Date:  10/16/2024
 <h2>Output:</h2>
 *** Using Compiler 'V6.22', folder: 'c:\Keil_v5\ARM\ARMCLANG\Bin'
 Rebuild target 'STM32F407 Flash'
-src/static_alloc.c(8): warning: unused variable 'static_pool' [-Wunused-variable]
-    8 | static uint8_t static_pool[STATIC_ALLOC_POOLSIZE] __attribute__ (( aligned(STATIC_ALLOC_ALIGNMENT) ));
-      |                ^~~~~~~~~~~
-1 warning generated.
+compiling hardfault.c...
+compiling mempool.c...
 compiling static_alloc.c...
 src/main.c(21): warning: unused variable 'poolElements' [-Wunused-variable]
    21 |         static packet_t poolElements[10];
       |                         ^~~~~~~~~~~~
 1 warning generated.
 compiling main.c...
-compiling mempool.c...
-compiling hardfault.c...
 compiling utils.c...
-compiling system_stm32f4xx.c...
 compiling retarget_io.c...
+compiling system_stm32f4xx.c...
 assembling startup_stm32f407xx.s...
 linking...
-Program Size: Code=11580 RO-data=1300 RW-data=116 ZI-data=1892  
-".\Objects\mempool.axf" - 0 Error(s), 2 Warning(s).
+Program Size: Code=11596 RO-data=1300 RW-data=116 ZI-data=18276  
+".\Objects\mempool.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -79,21 +75,21 @@ Package Vendor: Keil
 
    * Component: Keil::Compiler&ARM Compiler:I/O:STDOUT&User@1.2.0
       Source file:   Source/retarget_io.c
-      Source file:   Template/stdout_user.c
       Source file:   Template/stdout_display.c
+      Source file:   Template/stdout_user.c
       Source file:   Template/stdout_USART.c
 
    * Component: Keil::Compiler&ARM Compiler:I/O:TTY&User@1.2.0
-      Source file:   Source/retarget_io.c
       Source file:   Template/tty_user.c
+      Source file:   Source/retarget_io.c
 
    * Component: Keil::Device:Startup@2.6.3
+      Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f407xx.s
       Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
       Source file:   MDK/Device/Source/ARM/STM32F40xxx_41xxx_OPT.s
       Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
-      Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f407xx.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

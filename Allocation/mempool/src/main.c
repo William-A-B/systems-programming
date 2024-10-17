@@ -21,7 +21,7 @@ int main(void) {
 	static packet_t poolElements[10];
 
 	
-	pool_init(&pool, 1, 10);
+	pool_init(&pool, 12, 10);
 	/*
 	for (int i = 0; i < 10; ++i) {
 		pool_add(&pool, &poolElements[i]);

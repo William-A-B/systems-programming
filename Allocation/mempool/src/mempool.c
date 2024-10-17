@@ -25,6 +25,8 @@ void pool_deallocate(mempool_t *pool, void *block) {
 
 void pool_init(mempool_t *pool, size_t blocksize, size_t blocks) {
 	
+	blocksize = (~(STATIC_ALLOC_ALIGNMENT-1))&(blocksize+(STATIC_ALLOC_ALIGNMENT-1));
+	
 	uint32_t *static_pool_index = static_alloc(blocks * sizeof(blocksize));
 	
 	if (static_pool_index == 0) {
