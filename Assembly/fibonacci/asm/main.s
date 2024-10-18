@@ -13,9 +13,8 @@ asm_main
 	MOV r3, #1			; Current value
 loop
 	STR r3, [r0], #4	; Store current value in array then increment by 4 bytes
-	ADD r3, r3, r2		; compute next value - current value = current value + previous value
-	
-	
+	ADD r3, r3, r2		; Compute next value - current value = current value + previous value
+						; Work out a way to update r2 with the previous value without requiring to use r4
 	
 	
 
