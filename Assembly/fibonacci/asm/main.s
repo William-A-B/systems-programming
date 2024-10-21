@@ -11,6 +11,7 @@ asm_main
 	LDR r1, =array_end
 	MOV r2, #1			; Previous value
 	MOV r3, #1			; Current value
+	STR r2, [r0], #4	; Store first value in array
 loop
 	STR r3, [r0], #4	; Store current value in array then increment by 4 bytes
 	ADD r4, r3, r2		; Compute next value - current value = current value + previous value
