@@ -1,0 +1,138 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             mainarea,CODE
+    2 00000000                 EXPORT           fib
+    3 00000000         
+    4 00000000         
+    5 00000000         fib
+    6 00000000 B500            PUSH             {lr}
+    7 00000002         
+    8 00000002 2802            CMP              r0, #2
+    9 00000004 D90D            BLS              fib_base_case
+   10 00000006         
+   11 00000006 F1A0 0001       SUB              r0, r0, #1  ; r0 = r0 - 1 (n-1)
+                                                            
+   12 0000000A F7FF FFFE       BL               fib         ; Branch to fib wit
+                                                            h (n-1)
+   13 0000000E 4619            MOV              r1, r3      ; Store (n-1) in r1
+                                                            
+   14 00000010         
+   15 00000010 F1A0 0002       SUB              r0, r0, #2  ; r0 = r0 - 2 (n-2)
+                                                            
+   16 00000014 F7FF FFFE       BL               fib         ; Branch to fib wit
+                                                            h (n-2)
+   17 00000018 EB03 0201       ADD              r2, r3, r1  ; r2 = r0 (n-2) + r
+                                                            1 (n-1)
+   18 0000001C         
+   19 0000001C F85D EB04       POP              {lr}        ; Restore lr
+   20 00000020 4770            BX               lr          ; Return to caller
+   21 00000022         
+   22 00000022         
+   23 00000022         fib_base_case
+   24 00000022 F04F 0301       MOV              r3, #1      ; If n <= 2, r0 is 
+                                                            always 1
+   25 00000026 F85D EB04       POP              {lr}        ; Restore lr
+   26 0000002A 4770            BX               lr          ; Return to caller
+   27 0000002C         
+   28 0000002C         
+   29 0000002C         
+   30 0000002C         ;  
+   31 0000002C         ; CMP r0, #3  ; Is index one or two
+   32 0000002C         ; MOV r2, #1  ; Set value to 1
+   33 0000002C         ; BMI lr   ; Return
+   34 0000002C         ; 
+   35 0000002C         ;     ; Copy current index
+   36 0000002C         ;     ; Loop recursively
+   37 0000002C         ;     ; Decrement current index by one each loop
+   38 0000002C         ;     ; Add previous value and previous previous value
+   39 0000002C         ;     ; Compare current index to zero
+   40 0000002C         ; STR{IA} lr, [sp]
+   41 0000002C         ; SUB r0, #1
+   42 0000002C         ; CMP r0, #3
+   43 0000002C         ; BEQ check
+   44 0000002C         ;check_end
+   45 0000002C         ; 
+   46 0000002C         ; BL fib
+   47 0000002C         ; 
+   48 0000002C         ; 
+   49 0000002C         ; 
+   50 0000002C         ; 
+   51 0000002C         ; 
+   52 0000002C         ;check
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   53 0000002C         ; LDR r14, [r13]
+   54 0000002C         ; BL fib
+   55 0000002C         ; 
+   56 0000002C         ; 
+   57 0000002C         ; 
+   58 0000002C         ; 
+   59 0000002C         ; 
+   60 0000002C         ; 
+   61 0000002C         ; 
+   62 0000002C         ; 
+   63 0000002C         ; MOV r1, #3
+   64 0000002C         ; CMP r1, r0
+   65 0000002C         ; 
+   66 0000002C         ; LDR{DB} lr, sp
+   67 0000002C         ; BEQ lr
+   68 0000002C         ; 
+   69 0000002C         ; 
+   70 0000002C         ; STR{IA} lr, sp
+   71 0000002C         ; BL fib
+   72 0000002C         ; 
+   73 0000002C         ; 
+   74 0000002C         ; 
+   75 0000002C         ; 
+   76 0000002C         
+   77 0000002C         
+   78 0000002C                 END
+Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4.fp.sp 
+--depend=.\objects\fibonacci.d -o.\objects\fibonacci.o -I.\RTE\_STM32F407_Flash
+ -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include -IC:\Keil_v5\ARM\PACK
+\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include -IC:\Keil_
+v5\ARM\PACK\Keil\STM32F4xx_DFP\3.0.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include 
+--predefine="__UVISION_VERSION SETA 541" --predefine="STM32F407xx SETA 1" --pre
+define="_RTE_ SETA 1" --list=.\listings\fibonacci.lst asm\fibonacci.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+fib 00000000
+
+Symbol: fib
+   Definitions
+      At line 5 in file asm\fibonacci.s
+   Uses
+      At line 2 in file asm\fibonacci.s
+      At line 12 in file asm\fibonacci.s
+      At line 16 in file asm\fibonacci.s
+
+fib_base_case 00000022
+
+Symbol: fib_base_case
+   Definitions
+      At line 23 in file asm\fibonacci.s
+   Uses
+      At line 9 in file asm\fibonacci.s
+Comment: fib_base_case used once
+mainarea 00000000
+
+Symbol: mainarea
+   Definitions
+      At line 1 in file asm\fibonacci.s
+   Uses
+      None
+Comment: mainarea unused
+3 symbols
+337 symbols in table
