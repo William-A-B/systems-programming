@@ -3,7 +3,7 @@
 	IMPORT fib
 		
 asm_main
-	MOV r0, #7
+	MOV r0, #8
 	
 	PUSH {lr}
 	BL fib

@@ -9,7 +9,7 @@ ARM Macro Assembler    Page 1
     3 00000000                 IMPORT           fib
     4 00000000         
     5 00000000         asm_main
-    6 00000000 F04F 0007       MOV              r0, #7
+    6 00000000 F04F 0008       MOV              r0, #8
     7 00000004         
     8 00000004 B500            PUSH             {lr}
     9 00000006 F7FF FFFE       BL               fib

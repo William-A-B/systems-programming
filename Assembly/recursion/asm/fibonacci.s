@@ -8,12 +8,18 @@ fib
 	CMP r0, #2
 	BLS fib_base_case
 	
+	PUSH {r0}
+	
 	SUB r0, r0, #1		; r0 = r0 - 1 (n-1)
 	BL fib				; Branch to fib with (n-1)
 	MOV r1, r0			; Store (n-1) in r1
 	
+	POP {r0}
+	PUSH {r1}
+	
 	SUB r0, r0, #2		; r0 = r0 - 2 (n-2)
 	BL fib				; Branch to fib with (n-2)
+	POP{r1}
 	ADD r0, r0, r1		; r0 = r0 (n-2) + r1 (n-1)
 	
 	POP {lr}			; Restore lr
