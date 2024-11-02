@@ -9,105 +9,71 @@ ARM Macro Assembler    Page 1
     3 00000000         
     4 00000000         
     5 00000000         fib
-    6 00000000 B500            PUSH             {lr}
-    7 00000002         
-    8 00000002 2802            CMP              r0, #2
-    9 00000004 D910            BLS              fib_base_case
-   10 00000006         
-   11 00000006 B401            PUSH             {r0}
-   12 00000008         
-   13 00000008 F1A0 0001       SUB              r0, r0, #1  ; r0 = r0 - 1 (n-1)
+    6 00000000         ;PUSH {lr}   ; Store link register on stack
+    7 00000000 B500            STMFD            sp!, {lr}
+    8 00000002         
+    9 00000002 2802            CMP              r0, #2      ; Compare r0 with 2
+                                                            . 
+   10 00000004 D90E            BLS              fib_base_case ; Branch if equal
+                                                             or less than
+   11 00000006         
+   12 00000006         ;PUSH {r0}   ; Store r0 on the stack
+   13 00000006 B401            STMFD            sp!, {r0}
+   14 00000008         
+   15 00000008 F1A0 0001       SUB              r0, r0, #1  ; r0 = r0 - 1 (n-1)
                                                             
-   14 0000000C F7FF FFFE       BL               fib         ; Branch to fib wit
+   16 0000000C F7FF FFFE       BL               fib         ; Branch to fib wit
                                                             h (n-1)
-   15 00000010 4601            MOV              r1, r0      ; Store (n-1) in r1
+   17 00000010 4601            MOV              r1, r0      ; Store (n-1) in r1
                                                             
-   16 00000012         
-   17 00000012 BC01            POP              {r0}
-   18 00000014 B402            PUSH             {r1}
-   19 00000016         
-   20 00000016 F1A0 0002       SUB              r0, r0, #2  ; r0 = r0 - 2 (n-2)
+   18 00000012         
+   19 00000012         ;POP {r0}   ; Retrieve r0 from stack
+   20 00000012 BC01            LDMFD            sp!, {r0}
+   21 00000014         ;PUSH {r1}   ; Store r1 on the stack
+   22 00000014 B402            STMFD            sp!, {r1}
+   23 00000016         
+   24 00000016 F1A0 0002       SUB              r0, r0, #2  ; r0 = r0 - 2 (n-2)
                                                             
-   21 0000001A F7FF FFFE       BL               fib         ; Branch to fib wit
+   25 0000001A F7FF FFFE       BL               fib         ; Branch to fib wit
                                                             h (n-2)
-   22 0000001E BC02            POP{r1}
-   23 00000020 4408            ADD              r0, r0, r1  ; r0 = r0 (n-2) + r
+   26 0000001E         ;POP{r1}
+   27 0000001E BC02            LDMFD            sp!, {r1}
+   28 00000020 4408            ADD              r0, r0, r1  ; r0 = r0 (n-2) + r
                                                             1 (n-1)
-   24 00000022         
-   25 00000022 F85D EB04       POP              {lr}        ; Restore lr
-   26 00000026 4770            BX               lr          ; Return to caller
-   27 00000028         
-   28 00000028         
-   29 00000028         fib_base_case
-   30 00000028 F04F 0001       MOV              r0, #1      ; If n <= 2, r0 is 
+   29 00000022         
+   30 00000022 BD00            LDMFD            sp!, {pc}   ; Pop lr into pc, s
+                                                            o no need to branch
+                                                             as pc will automat
+                                                            ically branch to lr
+                                                            
+   31 00000024         
+   32 00000024         ;POP {lr}   ; Restore lr
+   33 00000024         ;BX lr    ; Return to caller
+   34 00000024         
+   35 00000024         
+   36 00000024         fib_base_case
+   37 00000024 F04F 0001       MOV              r0, #1      ; If n <= 2, r0 is 
                                                             always 1
-   31 0000002C F85D EB04       POP              {lr}        ; Restore lr
-   32 00000030 4770            BX               lr          ; Return to caller
-   33 00000032         
-   34 00000032         
-   35 00000032         
-   36 00000032         ;  
-   37 00000032         ; CMP r0, #3  ; Is index one or two
-   38 00000032         ; MOV r2, #1  ; Set value to 1
-   39 00000032         ; BMI lr   ; Return
-   40 00000032         ; 
-   41 00000032         ;     ; Copy current index
-   42 00000032         ;     ; Loop recursively
-   43 00000032         ;     ; Decrement current index by one each loop
-   44 00000032         ;     ; Add previous value and previous previous value
-   45 00000032         ;     ; Compare current index to zero
-   46 00000032         ; STR{IA} lr, [sp]
-   47 00000032         ; SUB r0, #1
-   48 00000032         ; CMP r0, #3
-   49 00000032         ; BEQ check
-   50 00000032         ;check_end
-   51 00000032         ; 
-   52 00000032         ; BL fib
+   38 00000028 BD00            LDMFD            sp!, {pc}
+   39 0000002A         ;POP {lr}   ; Restore lr
+   40 0000002A         ;BX lr    ; Return to caller
+   41 0000002A         
+   42 0000002A         
+   43 0000002A                 END
+Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4.fp.sp 
+--depend=.\objects\fibonacci.d -o.\objects\fibonacci.o -I.\RTE\_STM32F407_Flash
+ -IC:\Users\wabet\AppData\Local\Arm\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include -I
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-   53 00000032         ; 
-   54 00000032         ; 
-   55 00000032         ; 
-   56 00000032         ; 
-   57 00000032         ; 
-   58 00000032         ;check
-   59 00000032         ; LDR r14, [r13]
-   60 00000032         ; BL fib
-   61 00000032         ; 
-   62 00000032         ; 
-   63 00000032         ; 
-   64 00000032         ; 
-   65 00000032         ; 
-   66 00000032         ; 
-   67 00000032         ; 
-   68 00000032         ; 
-   69 00000032         ; MOV r1, #3
-   70 00000032         ; CMP r1, r0
-   71 00000032         ; 
-   72 00000032         ; LDR{DB} lr, sp
-   73 00000032         ; BEQ lr
-   74 00000032         ; 
-   75 00000032         ; 
-   76 00000032         ; STR{IA} lr, sp
-   77 00000032         ; BL fib
-   78 00000032         ; 
-   79 00000032         ; 
-   80 00000032         ; 
-   81 00000032         ; 
-   82 00000032         
-   83 00000032         
-   84 00000032                 END
-Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4.fp.sp 
---depend=.\objects\fibonacci.d -o.\objects\fibonacci.o -I.\RTE\_STM32F407_Flash
- -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include -IC:\Keil_v5\ARM\PACK
-\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include -IC:\Keil_
-v5\ARM\PACK\Keil\STM32F4xx_DFP\3.0.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include 
---predefine="__UVISION_VERSION SETA 541" --predefine="STM32F407xx SETA 1" --pre
-define="_RTE_ SETA 1" --list=.\listings\fibonacci.lst asm\fibonacci.s
+C:\Users\wabet\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\
+Device\ST\STM32F4xx\Include -IC:\Users\wabet\AppData\Local\Arm\Packs\Keil\STM32
+F4xx_DFP\3.0.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__EVAL SE
+TA 1" --predefine="__UVISION_VERSION SETA 541" --predefine="STM32F407xx SETA 1"
+ --predefine="_RTE_ SETA 1" --list=.\listings\fibonacci.lst asm\fibonacci.s
 
 
 
@@ -121,16 +87,16 @@ Symbol: fib
       At line 5 in file asm\fibonacci.s
    Uses
       At line 2 in file asm\fibonacci.s
-      At line 14 in file asm\fibonacci.s
-      At line 21 in file asm\fibonacci.s
+      At line 16 in file asm\fibonacci.s
+      At line 25 in file asm\fibonacci.s
 
-fib_base_case 00000028
+fib_base_case 00000024
 
 Symbol: fib_base_case
    Definitions
-      At line 29 in file asm\fibonacci.s
+      At line 36 in file asm\fibonacci.s
    Uses
-      At line 9 in file asm\fibonacci.s
+      At line 10 in file asm\fibonacci.s
 Comment: fib_base_case used once
 mainarea 00000000
 
@@ -141,4 +107,4 @@ Symbol: mainarea
       None
 Comment: mainarea unused
 3 symbols
-337 symbols in table
+338 symbols in table

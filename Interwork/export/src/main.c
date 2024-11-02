@@ -9,6 +9,8 @@ int main(void) {
 	configClock();
 	configUSART2(38400);
 
+	int32_t result = calculate(5, 2);
+	
 	printf("Returned value: %d\r\n", calculate(5, 2));
 
 	while(1);
