@@ -8,83 +8,71 @@ ARM Macro Assembler    Page 1
     2 00000000         
     3 00000000                 EXPORT           fib
     4 00000000                 IMPORT           report
-    5 00000000         ;EXPORT calculate
-    6 00000000         
-    7 00000000         ;calculate
-    8 00000000         ; ;STMFD sp!, {r0, lr}
-    9 00000000         ; ADD r0, r0, r0, LSL #2  ; r0 = r0 + 4r0
-   10 00000000         ; ADD r0, r1, r0    ; r0 = r1 + r0
-   11 00000000         ; 
-   12 00000000         ; BX lr
-   13 00000000         ; 
-   14 00000000         ; END
-   15 00000000         
-   16 00000000         fib
-   17 00000000 B508            STMFD            sp!, {lr, r3} ; Store link regi
-                                                            ster on stack
-   18 00000002         
-   19 00000002 2802            CMP              r0, #2      ; Compare r0 with 2
+    5 00000000         
+    6 00000000         fib
+    7 00000000 B538            STMFD            sp!, {r3, r4, r5, lr} ; Store l
+                                                            ink register on sta
+                                                            ck
+    8 00000002         
+    9 00000002 2802            CMP              r0, #2      ; Compare r0 with 2
                                                             . 
-   20 00000004 D912            BLS              fib_base_case ; Branch if equal
+   10 00000004 D910            BLS              fib_base_case ; Branch if equal
                                                              or less than
-   21 00000006         
-   22 00000006 B409            STMFD            sp!, {r0, r3} ; Store r0 on the
-                                                             stack
-   23 00000008         
-   24 00000008 F1A0 0001       SUB              r0, r0, #1  ; r0 = r0 - 1 (n-1)
+   11 00000006         
+   12 00000006 4604            MOV              r4, r0      ; Move current inde
+                                                            x r0 into r4
+   13 00000008         
+   14 00000008 F1A4 0001       SUB              r0, r4, #1  ; r0 = r4 - 1 (n-1)
                                                             
-   25 0000000C F7FF FFFE       BL               fib         ; Branch to fib wit
+   15 0000000C F7FF FFFE       BL               fib         ; Branch to fib wit
                                                             h (n-1)
-   26 00000010 4601            MOV              r1, r0      ; Store (n-1) in r1
+   16 00000010 4605            MOV              r5, r0      ; Store (n-1) in r5
                                                             
-   27 00000012         
-   28 00000012 BC09            LDMFD            sp!, {r0, r3} ; Retrieve r0 fro
-                                                            m stack
-   29 00000014 B40A            STMFD            sp!, {r1, r3} ; Store r1 on the
-                                                             stack
-   30 00000016         
-   31 00000016 F1A0 0002       SUB              r0, r0, #2  ; r0 = r0 - 2 (n-2)
+   17 00000012         
+   18 00000012 F1A4 0002       SUB              r0, r4, #2  ; r0 = r4 - 2 (n-2)
                                                             
-   32 0000001A F7FF FFFE       BL               fib         ; Branch to fib wit
+   19 00000016 F7FF FFFE       BL               fib         ; Branch to fib wit
                                                             h (n-2)
-   33 0000001E         
-   34 0000001E BC0A            LDMFD            sp!, {r1, r3} ; Load r1 from th
-                                                            e stack
-   35 00000020 4408            ADD              r0, r0, r1  ; r0 = r0 (n-2) + r
-                                                            1 (n-1)
-   36 00000022         
-   37 00000022 B403            STMFD            sp!, {r0, r1}
-   38 00000024 F7FF FFFE       BL               report      ; Branch to C repor
+   20 0000001A         
+   21 0000001A EB00 0405       ADD              r4, r0, r5  ; r4 = r0 (n-2) + r
+                                                            5 (n-1)
+   22 0000001E         
+   23 0000001E 4620            MOV              r0, r4      ; Move r4 to r0 for
+                                                             the branch argumen
+                                                            t
+   24 00000020 F7FF FFFE       BL               report      ; Branch to C repor
                                                             t function to print
                                                              the current value 
                                                             of r0
-   39 00000028 BC03            LDMFD            sp!, {r0, r1}
-   40 0000002A BD08            LDMFD            sp!, {pc, r3} ; Retrieve lr int
-                                                            o pc, implicit retu
-                                                            rn
-   41 0000002C         
+   25 00000024 4620            MOV              r0, r4      ; Restore clobbered
+                                                             r0 with r4 before 
+                                                            returning
+   26 00000026 BD38            LDMFD            sp!, {r3, r4, r5, pc} ; Retriev
+                                                            e lr into pc, impli
+                                                            cit return
+   27 00000028         
+   28 00000028         
+   29 00000028         fib_base_case
+   30 00000028 F04F 0001       MOV              r0, #1      ; If n <= 2, r0 is 
+                                                            always 1
+   31 0000002C BD38            LDMFD            sp!, {r3, r4, r5, pc} ; Restore
+                                                             lr into pc and imp
+                                                            licit return
+   32 0000002E         
+   33 0000002E                 END
+Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4.fp.sp 
+--depend=.\objects\asm.d -o.\objects\asm.o -I.\RTE\_STM32F407_Flash -IC:\Keil_v
+5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include -IC:\Keil_v5\ARM\PACK\Keil\STM32F
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-   42 0000002C         
-   43 0000002C         fib_base_case
-   44 0000002C F04F 0001       MOV              r0, #1      ; If n <= 2, r0 is 
-                                                            always 1
-   45 00000030 BD08            LDMFD            sp!, {pc, r3} ; Restore lr into
-                                                             pc and return
-   46 00000032         
-   47 00000032                 END
-Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4.fp.sp 
---depend=.\objects\asm.d -o.\objects\asm.o -I.\RTE\_STM32F407_Flash -IC:\Users\
-wabet\AppData\Local\Arm\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include -IC:\Users\wab
-et\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\ST
-M32F4xx\Include -IC:\Users\wabet\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\3.0
-.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__EVAL SETA 1" --pred
-efine="__UVISION_VERSION SETA 541" --predefine="STM32F407xx SETA 1" --predefine
-="_RTE_ SETA 1" --list=.\listings\asm.lst asm\asm.s
+4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include -IC:\Keil_v5\ARM\PACK\
+Keil\STM32F4xx_DFP\3.0.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine=
+"__UVISION_VERSION SETA 541" --predefine="STM32F407xx SETA 1" --predefine="_RTE
+_ SETA 1" --list=.\listings\asm.lst asm\asm.s
 
 
 
@@ -95,19 +83,19 @@ fib 00000000
 
 Symbol: fib
    Definitions
-      At line 16 in file asm\asm.s
+      At line 6 in file asm\asm.s
    Uses
       At line 3 in file asm\asm.s
-      At line 25 in file asm\asm.s
-      At line 32 in file asm\asm.s
+      At line 15 in file asm\asm.s
+      At line 19 in file asm\asm.s
 
-fib_base_case 0000002C
+fib_base_case 00000028
 
 Symbol: fib_base_case
    Definitions
-      At line 43 in file asm\asm.s
+      At line 29 in file asm\asm.s
    Uses
-      At line 20 in file asm\asm.s
+      At line 10 in file asm\asm.s
 Comment: fib_base_case used once
 mainarea 00000000
 
@@ -130,7 +118,7 @@ Symbol: report
    Definitions
       At line 4 in file asm\asm.s
    Uses
-      At line 38 in file asm\asm.s
+      At line 24 in file asm\asm.s
 Comment: report used once
 1 symbol
-339 symbols in table
+338 symbols in table
