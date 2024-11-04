@@ -22,11 +22,15 @@ void printInteger(void *ptr) {
 	printf("%" PRId32 "\r\n", *value);
 }
 
+void printDouble(void *ptr) {
+	double *value = ptr;
+	printf("%f\r\n", *value); 
+}
+
 int main(void) {
 	configClock();
 	configUSART2(38400);
 
-	
 	structure_t structure = {.x = 5, .y = 10};
 	
 	int32_t val = 3;
@@ -36,10 +40,22 @@ int main(void) {
 	structure.callback = printInteger;
 	
 	process(&structure);
-	structure.callback((void*) structure.x);
-	structure.callback((void*) structure.y);
 	
+	structure.callback(&structure.x);
+	structure.callback(&structure.y);
 	
-
+	structure_t my_struct = {.x = 3, .y = 6};
+	
+	double a_double = 5.5f;
+	
+	my_struct.ptr = &a_double;
+	
+	my_struct.callback = printDouble;
+	
+	process(&my_struct);
+	
+	structure.callback(&my_struct.x);
+	structure.callback(&my_struct.y);
+	
 	while(1);
 }

@@ -6,17 +6,37 @@ ARM Macro Assembler    Page 1
 
     1 00000000                 AREA             mainarea,CODE
     2 00000000         
-    3 00000000         ; Your instructions go here...
+    3 00000000                 EXPORT           process
     4 00000000         
-    5 00000000                 END
+    5 00000000         
+    6 00000000         process
+    7 00000000 B508            STMFD            sp!, {r3, lr} ; Store link regi
+                                                            ster
+    8 00000002 E890 00F0       LDMIA            r0, {r4, r5, r6, r7} ; Load the
+                                                             structure into scr
+                                                            atch registers
+    9 00000006 4425            ADD              r5, r4, r5  ; y = x + y
+   10 00000008 E880 0030       STMIA            r0, {r4, r5} ; Update the value
+                                                             of y in the struct
+                                                            ure
+   11 0000000C 4630            MOV              r0, r6      ; Move r6 (ptr fiel
+                                                            d) into r0 as branc
+                                                            h argument
+   12 0000000E 47B8            BLX              r7          ; Branch to address
+                                                             at r7 (callback fu
+                                                            nction)
+   13 00000010 BD08            LDMFD            sp!, {r3, pc} ; Implicit return
+                                                            
+   14 00000012         
+   15 00000012         
+   16 00000012                 END
 Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4.fp.sp 
---depend=.\objects\asm.d -o.\objects\asm.o -I.\RTE\_STM32F407_Flash -IC:\Users\
-wabet\AppData\Local\Arm\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include -IC:\Users\wab
-et\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\ST
-M32F4xx\Include -IC:\Users\wabet\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\3.0
-.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__EVAL SETA 1" --pred
-efine="__UVISION_VERSION SETA 541" --predefine="STM32F407xx SETA 1" --predefine
-="_RTE_ SETA 1" --list=.\listings\asm.lst asm\asm.s
+--depend=.\objects\asm.d -o.\objects\asm.o -I.\RTE\_STM32F407_Flash -IC:\Keil_v
+5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include -IC:\Keil_v5\ARM\PACK\Keil\STM32F
+4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include -IC:\Keil_v5\ARM\PACK\
+Keil\STM32F4xx_DFP\3.0.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine=
+"__UVISION_VERSION SETA 541" --predefine="STM32F407xx SETA 1" --predefine="_RTE
+_ SETA 1" --list=.\listings\asm.lst asm\asm.s
 
 
 
@@ -31,5 +51,13 @@ Symbol: mainarea
    Uses
       None
 Comment: mainarea unused
-1 symbol
-335 symbols in table
+process 00000000
+
+Symbol: process
+   Definitions
+      At line 6 in file asm\asm.s
+   Uses
+      At line 3 in file asm\asm.s
+Comment: process used once
+2 symbols
+336 symbols in table
