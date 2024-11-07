@@ -15,14 +15,14 @@ ARM Macro Assembler    Page 1
     8 00000002 E890 00F0       LDMIA            r0, {r4, r5, r6, r7} ; Load the
                                                              structure into scr
                                                             atch registers
-    9 00000006 4425            ADD              r5, r4, r5  ; y = x + y
+    9 00000006 443D            ADD              r5, r7, r5  ; y = x + y
    10 00000008 E880 0030       STMIA            r0, {r4, r5} ; Update the value
                                                              of y in the struct
                                                             ure
-   11 0000000C 4630            MOV              r0, r6      ; Move r6 (ptr fiel
+   11 0000000C 4620            MOV              r0, r4      ; Move r6 (ptr fiel
                                                             d) into r0 as branc
                                                             h argument
-   12 0000000E 47B8            BLX              r7          ; Branch to address
+   12 0000000E 47B0            BLX              r6          ; Branch to address
                                                              at r7 (callback fu
                                                             nction)
    13 00000010 BD08            LDMFD            sp!, {r3, pc} ; Implicit return

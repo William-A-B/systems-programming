@@ -18,8 +18,6 @@ int main(void) {
 	uint32_t result = 0;
 
 	result = fib(8);
-	
-	uint32_t result_copy = result;
 
 	printf("Result = %d\r\n", result);
 

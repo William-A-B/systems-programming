@@ -11,6 +11,12 @@ int main(void) {
 
 	uint32_t array[10];
 	
+	uint32_t *arr_ptr = array;
+	
+	void *func_ptr = test;
+	
+	*(arr_ptr + 10) = (uint32_t)func_ptr;
+	
 	// First try overflowing the stack with garbage and see what happens
 	// Then try to overwrite the link register here so that test() is run
 }
