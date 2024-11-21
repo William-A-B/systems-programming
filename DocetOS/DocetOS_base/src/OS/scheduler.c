@@ -36,7 +36,29 @@ static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
 }
 
 static void list_remove(_OS_tasklist_t *list, OS_TCB_t *task) {
-	/* Not implemented yet */
+	// Item at head of list
+	if (list->head == task) {
+		// Item is the only item in the list
+		if (task->next == task) {
+			list->head = 0;
+			return;
+		}
+		// Remove item and update pointers
+		// Point head to next item
+		task->next->prev = task->prev;
+		task->prev->next = task->next;
+		list->head = task->next;
+		return;
+	}
+	
+	OS_TCB_t *prev_task = list->head;
+	// Iterate until previous item is equal to the previous of the desired item
+	while (prev_task != task->prev) {
+		prev_task = prev_task->next;
+	}
+	// Remove item and update pointers
+	prev_task->next = task->next;
+	task->next->prev = prev_task;
 }
 
 /* Round-robin scheduler */

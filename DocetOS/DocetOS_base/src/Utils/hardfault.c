@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include "cmsis_armclang.h"
 
+void HardFault_Handler(void);
+void HardFault_HandlerC(uint32_t *hardfault_args);
+
 /**
  * HardFaultHandler_C:
  * This is called from the HardFault_Handler (below) with a pointer to the Fault stack
