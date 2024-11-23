@@ -1,6 +1,8 @@
 #include "/Utils/mode_utils.h"
 #include <stdio.h>
 
+void check_status_delegate();
+
 void reportState() {
 	
 	uint32_t PSR = getPSR();
@@ -9,35 +11,30 @@ void reportState() {
 	uint32_t nPRIV_position = 0;
 	uint32_t SPSEL_position = 1 << 1;
 	
-	uint32_t thread_mode = 2;
-	uint32_t active_sp_msp = 2;
-	uint32_t privileged = 2;
 	
 	if ((PSR & PSR_mask) == 0) {
-		//printf("Thread Mode");
-		thread_mode = 1;
+		printf("Thread Mode");
+		
 		if ((CONTROL >> nPRIV_position) == 0) {
-			//printf("Code is privileged");
-			privileged = 1;
+			printf("Privileged");
 		}
 		else {
-			//printf("Code is unprivileged");
-			privileged = 0;
+			printf("Unprivileged");
 		}
 	}
 	else {
-		//printf("Handler Mode");
-		thread_mode = 0;
-		privileged = 1;
+		printf("Handler Mode");
 	}
 	
 	if ((CONTROL >> SPSEL_position) == 0) {
-		//printf("Active Stack Pointer = MSP");
-		active_sp_msp = 1;
+		printf("MSP in use");
 	}
 	else {
-		//printf("Active Stack Pointer = PSP");
-		active_sp_msp = 0;
+		printf("PSP in use");
 	}
 	
+}
+
+void check_status_delegate() {
+	reportState();
 }

@@ -21,6 +21,8 @@ static void task3(void const *const args) {
 	(void) args;
 	while (1) {	
 		printf("PSR = %08x\r\n", getPSR());
+		printf("PSR = %08x\r\n", getCONTROL());
+		reportState();
 	}
 }
 
@@ -49,6 +51,10 @@ int main(void) {
 	//OS_addTask(&TCB1);
 	//OS_addTask(&TCB2);
 	OS_addTask(&TCB3);
+
+	printf("PSR = %08x\r\n", getPSR());
+	printf("PSR = %08x\r\n", getCONTROL());
+	reportState();
 
 	/* Start the OS */
 	OS_start();
