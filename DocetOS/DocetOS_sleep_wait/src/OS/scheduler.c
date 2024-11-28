@@ -63,15 +63,15 @@ static void list_remove(_OS_tasklist_t *list, OS_TCB_t *task) {
 
 /* Round-robin scheduler */
 OS_TCB_t const * _OS_schedule(void) {
+	OS_TCB_t const * const currentHead = task_list.head;
 	if (task_list.head) {
 		task_list.head = task_list.head->next;
-		if ((task_list.head->state & TASK_STATE_SLEEP) != TASK_STATE_SLEEP) {
+		if (!(task_list.head->state & TASK_STATE_SLEEP)) {
 			task_list.head->state &= ~TASK_STATE_YIELD;
 			return task_list.head;
 		}
 		if (task_list.head->wakeup_time < OS_elapsedTicks()) {
-			task_list.head->state &= ~TASK_STATE_SLEEP;
-			task_list.head->state &= ~TASK_STATE_YIELD;
+			task_list.head->state &= ~(TASK_STATE_SLEEP | TASK_STATE_YIELD);
 			return task_list.head;
 		}
 		
