@@ -2,6 +2,7 @@
 #include "Utils/utils.h"
 #include <stdio.h>
 #include "Utils/mode_utils.h"
+#include <inttypes.h>
 
 static void task1(void const *const args) {
 	(void) args;
@@ -19,11 +20,11 @@ static void task2(void const *const args) {
 
 static void task3(void const *const args) {
 	(void) args;
-	while (1) {	
-		printf("PSR = %08x\r\n", getPSR());
-		printf("PSR = %08x\r\n", getCONTROL());
+//	while (1) {	
 		reportState();
-	}
+		uint32_t return_val = check_CPU_state(5);
+		printf("returned value = %"PRIu32"\r\n", return_val);
+//	}
 }
 
 /* MAIN FUNCTION */
@@ -48,8 +49,8 @@ int main(void) {
 	OS_initialiseTCB(&TCB3, stack3+128, task3, NULL);
 	
 	/* Add the tasks to the scheduler */
-	//OS_addTask(&TCB1);
-	//OS_addTask(&TCB2);
+//	OS_addTask(&TCB1);
+//	OS_addTask(&TCB2);
 	OS_addTask(&TCB3);
 
 	printf("PSR = %08x\r\n", getPSR());

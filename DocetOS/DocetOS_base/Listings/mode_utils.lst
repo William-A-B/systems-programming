@@ -21,13 +21,12 @@ ARM Macro Assembler    Page 1
    14 0000000C                 END
 Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4 --fpu=
 SoftVFP --depend=.\objects\mode_utils.d -o.\objects\mode_utils.o -I.\RTE\_STM32
-F407_Flash -IC:\Users\wabet\AppData\Local\Arm\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\
-Include -IC:\Users\wabet\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Driv
-ers\CMSIS\Device\ST\STM32F4xx\Include -IC:\Users\wabet\AppData\Local\Arm\Packs\
-Keil\STM32F4xx_DFP\3.0.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine=
-"__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 541" --predefine="STM32F407
-xx SETA 1" --predefine="_RTE_ SETA 1" --list=.\listings\mode_utils.lst asm\mode
-_utils.s
+F407_Flash -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include -IC:\Keil_v
+5\ARM\PACK\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include 
+-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\3.0.0\Drivers\CMSIS\Device\ST\STM32F4x
+x\Include --predefine="__UVISION_VERSION SETA 541" --predefine="STM32F407xx SET
+A 1" --predefine="_RTE_ SETA 1" --list=.\listings\mode_utils.lst asm\mode_utils
+.s
 
 
 
@@ -59,4 +58,4 @@ Symbol: utils
       None
 Comment: utils unused
 3 symbols
-337 symbols in table
+336 symbols in table
