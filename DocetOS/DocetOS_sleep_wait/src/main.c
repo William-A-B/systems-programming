@@ -3,11 +3,13 @@
 #include <stdio.h>
 #include "Utils/mode_utils.h"
 #include <inttypes.h>
+#include "OS/sleep.h"
 
 static void task1(void const *const args) {
 	(void) args;
-	for (uint_fast16_t i = 0; i < 1000; ++i) {
+	while (1) {
 		printf("AAAAAAAA");
+		//OS_sleep(100);
 	}
 }
 
@@ -15,6 +17,7 @@ static void task2(void const *const args) {
 	(void) args;
 	while (1) {
 		printf("BBBBBBBB");
+		//OS_sleep(20);
 	}
 }
 
@@ -44,9 +47,9 @@ int main(void) {
 	OS_initialiseTCB(&TCB3, stack3+128, task3, NULL);
 	
 	/* Add the tasks to the scheduler */
-//	OS_addTask(&TCB1);
-//	OS_addTask(&TCB2);
-	OS_addTask(&TCB3);
+	OS_addTask(&TCB1);
+	OS_addTask(&TCB2);
+	//OS_addTask(&TCB3);
 
 	/* Start the OS */
 	OS_start();

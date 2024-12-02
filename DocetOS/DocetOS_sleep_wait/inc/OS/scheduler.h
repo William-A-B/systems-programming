@@ -2,6 +2,8 @@
 #define __scheduler_h__
 
 #include <stdint.h>
+uint32_t __LDREXW (uint32_t *addr);
+uint32_t __STREXW (uint32_t value, uint32_t *addr);
 
 /*========================*/
 /*      EXTERNAL API      */

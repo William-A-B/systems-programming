@@ -8,6 +8,7 @@
 #include <string.h>
 
 
+
 /* This is an implementation of an extremely simple round-robin scheduler.
 
    A task list structure is declared.  Tasks are added to the list to create a circular buffer.
@@ -21,6 +22,7 @@
 */
 
 static _OS_tasklist_t task_list = {.head = 0};
+static _OS_tasklist_t wait_list = {.head = 0};
 
 static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
 	if (!(list->head)) {
@@ -61,19 +63,39 @@ static void list_remove(_OS_tasklist_t *list, OS_TCB_t *task) {
 	task->next->prev = prev_task;
 }
 
+static void list_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
+	do {
+		OS_TCB_t *head = (OS_TCB_t *) __LDREXW ((uint32_t *)&(list->head));
+		task->next = head;
+	} while (__STREXW ((uint32_t) task, (uint32_t *)&(list->head)));
+}
+
+static OS_TCB_t *list_pop_sl(_OS_tasklist_t *list) {
+	
+}
+
 /* Round-robin scheduler */
 OS_TCB_t const * _OS_schedule(void) {
-	OS_TCB_t const * const currentHead = task_list.head;
+
+	// If there is a task in the list
 	if (task_list.head) {
-		task_list.head = task_list.head->next;
-		if (!(task_list.head->state & TASK_STATE_SLEEP)) {
-			task_list.head->state &= ~TASK_STATE_YIELD;
-			return task_list.head;
-		}
-		if (task_list.head->wakeup_time < OS_elapsedTicks()) {
-			task_list.head->state &= ~(TASK_STATE_SLEEP | TASK_STATE_YIELD);
-			return task_list.head;
-		}
+		// Store current head to compare with loop
+		OS_TCB_t const * const currentHead = task_list.head;
+		do {
+			// Get next task
+			task_list.head = task_list.head->next;
+			// If task is not asleep, unset the yield bit, and return new task
+			if (!(task_list.head->state & TASK_STATE_SLEEP)) {
+				task_list.head->state &= ~TASK_STATE_YIELD;
+				return task_list.head;
+			}
+			// If task wakup time is less than the curernt time, then wake up task and unset the yield and sleep bit
+			// Return new task
+			if (task_list.head->wakeup_time < OS_elapsedTicks()) {
+				task_list.head->state &= ~(TASK_STATE_SLEEP | TASK_STATE_YIELD);
+				return task_list.head;
+			}
+		} while (task_list.head != currentHead);
 		
 	}
 	// No tasks are runnable, so return the idle task
