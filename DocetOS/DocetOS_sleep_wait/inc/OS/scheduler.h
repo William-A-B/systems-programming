@@ -40,7 +40,11 @@ typedef struct s_OS_TCB_t {
    The fourth argument is a void pointer to data that the task should receive. */
 void OS_initialiseTCB(OS_TCB_t * TCB, uint32_t * const stack, void (* const func)(void const * const), void const * const data);
 
+/* 'Add task' */
 void OS_addTask(OS_TCB_t * const tcb);
+
+/* Notify all tasks in wait list and move them to pending list */
+void OS_notifyAll(void);
 
 /*========================*/
 /*      INTERNAL API      */
@@ -55,6 +59,7 @@ typedef struct {
 } _OS_tasklist_t;
 
 /* SVC delegates */
+void _OS_wait_delegate(void);
 void _OS_taskExit_delegate(void);
 
 /* Constants that define bits in a thread's 'state' field. */

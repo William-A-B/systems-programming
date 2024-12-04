@@ -7,18 +7,26 @@
 
 static void task1(void const *const args) {
 	(void) args;
+	uint32_t i = 0;
 	while (1) {
 		printf("AAAAAAAA");
+		
+		if (i == 100) {
+			OS_wait();
+			i++;
+		}
+		i++;
 		//OS_sleep(100);
 	}
 }
 
 static void task2(void const *const args) {
 	(void) args;
-	while (1) {
+	for (uint32_t i = 0; i<500; i++) {
 		printf("BBBBBBBB");
 		//OS_sleep(20);
 	}
+	OS_notifyAll();
 }
 
 static void task3(void const *const args) {

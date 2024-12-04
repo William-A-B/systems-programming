@@ -7,7 +7,4 @@
 void OS_sleep(uint32_t);
 
 
-
-
-
 #endif /* SLEEP_H */

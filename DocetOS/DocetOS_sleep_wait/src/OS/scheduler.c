@@ -23,6 +23,7 @@
 
 static _OS_tasklist_t task_list = {.head = 0};
 static _OS_tasklist_t wait_list = {.head = 0};
+static _OS_tasklist_t pending_list = {.head = 0};
 
 static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
 	if (!(list->head)) {
@@ -63,6 +64,7 @@ static void list_remove(_OS_tasklist_t *list, OS_TCB_t *task) {
 	task->next->prev = prev_task;
 }
 
+/* Add (push) given task onto the list provided */
 static void list_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
 	do {
 		OS_TCB_t *head = (OS_TCB_t *) __LDREXW ((uint32_t *)&(list->head));
@@ -70,13 +72,40 @@ static void list_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
 	} while (__STREXW ((uint32_t) task, (uint32_t *)&(list->head)));
 }
 
+/* Pop top task off the list and return it */
 static OS_TCB_t *list_pop_sl(_OS_tasklist_t *list) {
-	
+	// TODO WAB check how to implement STREXW check
+	OS_TCB_t *head_task = (OS_TCB_t *) __LDREXW ((uint32_t *)&(list->head));
+	list->head = head_task->next;
+	return head_task;
+}
+
+/* Remove current task from task list and place it in waiting list */
+void _OS_wait_delegate(void) {
+	OS_TCB_t *current_task = OS_currentTCB();
+	list_remove(&task_list, current_task);
+	list_push_sl(&wait_list, current_task);
+	SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
+}
+
+/* Notify all tasks in wait list and move them to pending list */
+void OS_notifyAll(void) {
+	// While wait list still has tasks in it
+	// Remove all tasks and add them to the pending list
+	while (wait_list.head != NULL) {
+		OS_TCB_t *task = list_pop_sl(&wait_list);
+		list_push_sl(&pending_list, task);
+	}
 }
 
 /* Round-robin scheduler */
 OS_TCB_t const * _OS_schedule(void) {
 
+	// While pending list is not empty, remove them and add them into the round robin
+	while (pending_list.head != NULL) {
+		OS_TCB_t *task = list_pop_sl(&pending_list);
+		list_add(&task_list, task);
+	}
 	// If there is a task in the list
 	if (task_list.head) {
 		// Store current head to compare with loop
