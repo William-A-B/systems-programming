@@ -7,7 +7,9 @@
 
 #include <string.h>
 
+void _OS_wait_delegate(_OS_SVC_StackFrame_t *);
 
+static uint32_t notification_counter = 0;
 
 /* This is an implementation of an extremely simple round-robin scheduler.
 
@@ -74,14 +76,23 @@ static void list_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
 
 /* Pop top task off the list and return it */
 static OS_TCB_t *list_pop_sl(_OS_tasklist_t *list) {
-	// TODO WAB check how to implement STREXW check
-	OS_TCB_t *head_task = (OS_TCB_t *) __LDREXW ((uint32_t *)&(list->head));
-	list->head = head_task->next;
+	OS_TCB_t *head_task;
+	do {
+		head_task = (OS_TCB_t *) __LDREXW ((uint32_t *)&(list->head));
+		if (!head_task) {
+			__CLREX();
+			return 0;
+		}
+	} while (__STREXW ((uint32_t) head_task->next, (uint32_t *)&(list->head)));
 	return head_task;
 }
 
 /* Remove current task from task list and place it in waiting list */
-void _OS_wait_delegate(void) {
+void _OS_wait_delegate(_OS_SVC_StackFrame_t * const stack) {
+	if (stack->r0 != notification_counter) {
+		return;
+	}
+	
 	OS_TCB_t *current_task = OS_currentTCB();
 	list_remove(&task_list, current_task);
 	list_push_sl(&wait_list, current_task);
@@ -92,8 +103,9 @@ void _OS_wait_delegate(void) {
 void OS_notifyAll(void) {
 	// While wait list still has tasks in it
 	// Remove all tasks and add them to the pending list
-	while (wait_list.head != NULL) {
-		OS_TCB_t *task = list_pop_sl(&wait_list);
+	OS_TCB_t *task;
+	notification_counter++;
+	while ((task = list_pop_sl(&wait_list))) {
 		list_push_sl(&pending_list, task);
 	}
 }
@@ -172,4 +184,8 @@ void _OS_taskExit_delegate(void) {
 	OS_TCB_t * tcb = OS_currentTCB();
 	list_remove(&task_list, tcb);
 	SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
+}
+
+uint32_t get_notification_counter(void) {
+	return notification_counter;
 }

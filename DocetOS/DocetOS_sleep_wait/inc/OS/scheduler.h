@@ -2,8 +2,7 @@
 #define __scheduler_h__
 
 #include <stdint.h>
-uint32_t __LDREXW (uint32_t *addr);
-uint32_t __STREXW (uint32_t value, uint32_t *addr);
+
 
 /*========================*/
 /*      EXTERNAL API      */
@@ -46,6 +45,8 @@ void OS_addTask(OS_TCB_t * const tcb);
 /* Notify all tasks in wait list and move them to pending list */
 void OS_notifyAll(void);
 
+uint32_t get_notification_counter(void);
+
 /*========================*/
 /*      INTERNAL API      */
 /*========================*/
@@ -59,7 +60,6 @@ typedef struct {
 } _OS_tasklist_t;
 
 /* SVC delegates */
-void _OS_wait_delegate(void);
 void _OS_taskExit_delegate(void);
 
 /* Constants that define bits in a thread's 'state' field. */

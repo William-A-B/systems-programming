@@ -44,7 +44,7 @@ uint32_t OS_elapsedTicks(void);
 #define OS_yield() _svc_0(OS_SVC_YIELD)
 
 /* SVC delegate to remove current task and move to waiting task list */
-#define OS_wait() _svc_0(OS_SVC_WAIT)
+#define OS_wait(arg0) _svc_1(arg0, OS_SVC_WAIT)
 
 /*========================*/
 /*      INTERNAL API      */

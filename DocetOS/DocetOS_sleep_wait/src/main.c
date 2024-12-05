@@ -4,29 +4,26 @@
 #include "Utils/mode_utils.h"
 #include <inttypes.h>
 #include "OS/sleep.h"
+#include "OS/mutex.h"
+
+static OS_mutex_t mutex = OS_MUTEX_STATIC_INITIALISER;
 
 static void task1(void const *const args) {
 	(void) args;
-	uint32_t i = 0;
 	while (1) {
+		OS_mutex_acquire(&mutex);
 		printf("AAAAAAAA");
-		
-		if (i == 100) {
-			OS_wait();
-			i++;
-		}
-		i++;
-		//OS_sleep(100);
+		OS_mutex_release(&mutex);
 	}
 }
 
 static void task2(void const *const args) {
 	(void) args;
-	for (uint32_t i = 0; i<500; i++) {
+	while (1) {
+		OS_mutex_acquire(&mutex);
 		printf("BBBBBBBB");
-		//OS_sleep(20);
+		OS_mutex_release(&mutex);
 	}
-	OS_notifyAll();
 }
 
 static void task3(void const *const args) {
@@ -39,9 +36,9 @@ int main(void) {
 	
 	configClock();
 	configUSART2(38400);
-	
+		
 	printf("\r\nDocetOS\r\n");
-
+	
 	/* Reserve memory for two stacks and two TCBs.
 	   Remember that stacks must be 8-byte aligned. */
 	static uint32_t stack1[128] __attribute__ (( aligned(8) ));
