@@ -20,7 +20,6 @@ enum OS_SVC_e {
 	OS_SVC_YIELD,
 	OS_SVC_SCHEDULE,
 	OS_SVC_WAIT,
-	OS_SVC_SLEEP,
 };
 
 /***************************/
@@ -46,9 +45,6 @@ uint32_t OS_elapsedTicks(void);
 
 /* SVC delegate to remove current task and move to waiting task list */
 #define OS_wait(arg0) _svc_1(arg0, OS_SVC_WAIT)
-
-/* SVC delegate to sleep the current task */
-#define OS_sleep(arg0) _svc_1(arg0, OS_SVC_SLEEP)
 
 /*========================*/
 /*      INTERNAL API      */

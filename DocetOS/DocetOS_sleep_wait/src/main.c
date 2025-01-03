@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "Utils/mode_utils.h"
 #include <inttypes.h>
+#include "OS/sleep.h"
 #include "OS/mutex.h"
 
 static OS_mutex_t mutex = OS_MUTEX_STATIC_INITIALISER;
@@ -22,7 +23,6 @@ static void task2(void const *const args) {
 		OS_mutex_acquire(&mutex);
 		printf("BBBBBBBB");
 		OS_mutex_release(&mutex);
-		//OS_sleep(50);
 	}
 }
 

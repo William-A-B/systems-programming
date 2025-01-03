@@ -1,10 +1,10 @@
-//#ifndef SLEEP_H
-//#define SLEEP_H
+#ifndef SLEEP_H
+#define SLEEP_H
 
-//#include <stdint.h>
-
-
-//void OS_sleep(uint32_t);
+#include <stdint.h>
 
 
-//#endif /* SLEEP_H */
+void OS_sleep(uint32_t);
+
+
+#endif /* SLEEP_H */
