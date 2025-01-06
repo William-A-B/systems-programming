@@ -171,17 +171,19 @@ OS_TCB_t const * _OS_schedule(void) {
 		OS_TCB_t *task = list_pop_sl(&pending_list);
 		list_add(&task_list, task);
 	}
-	
-	OS_TCB_t const * const current_sleep_head = sleep_list.head;
-	do {
-		// If task wakup time is less than the curernt time, then wake up task and unset the sleep bit
-		if (sleep_list.head->wakeup_time < OS_elapsedTicks()) {
-			OS_TCB_t *task = list_pop_sl(&sleep_list);
-			task->state &= ~TASK_STATE_SLEEP;
-			list_add(&task_list, task);
-		}
-		sleep_list.head = sleep_list.head->next;
-	} while (sleep_list.head != current_sleep_head);
+	// If tasks in sleep list
+	if (sleep_list.head) {
+		OS_TCB_t const * const current_sleep_head = sleep_list.head;
+		do {
+			// If task wakup time is less than the curernt time, then wake up task and unset the sleep bit
+			if (sleep_list.head->wakeup_time < OS_elapsedTicks()) {
+				OS_TCB_t *task = list_pop_sl(&sleep_list);
+				task->state &= ~TASK_STATE_SLEEP;
+				list_add(&task_list, task);
+			}
+			sleep_list.head = sleep_list.head->next;
+		} while (sleep_list.head != current_sleep_head);
+	}
 	
 	// If there is a task in the list
 	if (task_list.head) {
