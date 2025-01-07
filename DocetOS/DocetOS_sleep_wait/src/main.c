@@ -39,17 +39,24 @@ int main(void) {
 		
 	printf("\r\nDocetOS\r\n");
 	
+	uint32_t success = 1;
+	
 	/* Reserve memory for two stacks and two TCBs.
 	   Remember that stacks must be 8-byte aligned. */
 	static uint32_t stack1[128] __attribute__ (( aligned(8) ));
 	static uint32_t stack2[128] __attribute__ (( aligned(8) ));
 	static uint32_t stack3[128] __attribute__ (( aligned(8) ));
 	static OS_TCB_t TCB1, TCB2, TCB3;
-
+	
 	/* Initialise the TCBs using the two functions above */
-	OS_initialiseTCB(&TCB1, stack1+128, task1, NULL);
-	OS_initialiseTCB(&TCB2, stack2+128, task2, NULL);
-	OS_initialiseTCB(&TCB3, stack3+128, task3, NULL);
+	success = success & OS_initialiseTCB(&TCB1, stack1+128, task1, NULL, 1);
+	success = success & OS_initialiseTCB(&TCB2, stack2+128, task2, NULL, 0);
+	success = success & OS_initialiseTCB(&TCB3, stack3+128, task3, NULL, 3);
+	
+	if (!success) {
+		printf("One or more tasks initialised incorrectly\r\n");
+		return 0;
+	}
 	
 	/* Add the tasks to the scheduler */
 	OS_addTask(&TCB1);

@@ -8,6 +8,8 @@
 /*      EXTERNAL API      */
 /*========================*/
 
+#define MAX_NUM_PRIORITY_LEVELS 256
+
 typedef struct s_OS_TCB_t {
 	/* Task stack pointer.  It's important that this is the first entry in the structure,
 	   so that a simple double-dereference of a TCB pointer yields a stack pointer. */
@@ -17,6 +19,7 @@ typedef struct s_OS_TCB_t {
 	   below), so you can use the remaining 31 bits for anything you like. */
 	uint32_t volatile state;
 	uint32_t wakeup_time;
+	uint32_t priority;
 	struct s_OS_TCB_t * prev;
 	struct s_OS_TCB_t * next;
 } OS_TCB_t;
@@ -37,7 +40,7 @@ typedef struct s_OS_TCB_t {
      to this function.
    The third argument is a pointer to the function that the task should execute.
    The fourth argument is a void pointer to data that the task should receive. */
-void OS_initialiseTCB(OS_TCB_t * TCB, uint32_t * const stack, void (* const func)(void const * const), void const * const data);
+uint32_t OS_initialiseTCB(OS_TCB_t * TCB, uint32_t * const stack, void (* const func)(void const * const), void const * const data, uint32_t const priority);
 
 /* 'Add task' */
 void OS_addTask(OS_TCB_t * const tcb);

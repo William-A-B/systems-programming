@@ -199,9 +199,19 @@ OS_TCB_t const * _OS_schedule(void) {
 }
 
 /* Initialises a task control block (TCB) and its associated stack.  See os.h for details. */
-void OS_initialiseTCB(OS_TCB_t * TCB, uint32_t * const stack, void (* const func)(void const * const), void const * const data) {
+uint32_t OS_initialiseTCB(OS_TCB_t * TCB, uint32_t * const stack, void (* const func)(void const * const), void const * const data, uint32_t const priority) {
 	TCB->sp = stack - (sizeof(_OS_StackFrame_t) / sizeof(uint32_t));
 	TCB->state = 0;
+	TCB->wakeup_time = 0;
+	if (priority > MAX_NUM_PRIORITY_LEVELS) {
+		TCB->priority = MAX_NUM_PRIORITY_LEVELS;
+	}
+	else if (priority < 1) {
+		return 0;
+	}
+	else {
+		TCB->priority = priority;
+	}
 	TCB->prev = TCB->next = 0;
 	_OS_StackFrame_t *sf = (_OS_StackFrame_t *)(TCB->sp);
 	/* By placing the address of the task function in pc, and the address of _OS_task_end() in lr, the task
@@ -225,6 +235,8 @@ void OS_initialiseTCB(OS_TCB_t * TCB, uint32_t * const stack, void (* const func
 		.pc = (uint32_t)(func),
 		.psr = xPSR_T_Msk  /* Sets the thumb bit to avoid a big steaming fault */
 	};
+	
+	return 1;
 }
 
 /* 'Add task' */

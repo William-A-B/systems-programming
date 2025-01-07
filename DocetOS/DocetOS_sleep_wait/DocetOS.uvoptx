@@ -157,25 +157,41 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>170</LineNumber>
+          <LineNumber>67</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226504</Address>
+          <Address>134228726</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\src\OS\scheduler.c</Filename>
+          <Filename>.\src\main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\DocetOS\src/OS/scheduler.c\170</Expression>
+          <Expression>\\DocetOS\src/main.c\67</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
+          <LineNumber>56</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134228678</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\src\main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\DocetOS\src/main.c\56</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
           <LineNumber>23</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134228682</Address>
+          <Address>134228850</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -187,11 +203,11 @@
           <Expression>\\DocetOS\src/main.c\23</Expression>
         </Bp>
         <Bp>
-          <Number>2</Number>
+          <Number>3</Number>
           <Type>0</Type>
           <LineNumber>14</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134228638</Address>
+          <Address>134228806</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -203,11 +219,11 @@
           <Expression>\\DocetOS\src/main.c\14</Expression>
         </Bp>
         <Bp>
-          <Number>3</Number>
+          <Number>4</Number>
           <Type>0</Type>
-          <LineNumber>60</LineNumber>
+          <LineNumber>53</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134228560</Address>
+          <Address>134228578</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -216,7 +232,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\src\main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\DocetOS\src/main.c\60</Expression>
+          <Expression>\\DocetOS\src/main.c\53</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -269,6 +285,11 @@
           <count>9</count>
           <WinNumber>1</WinNumber>
           <ItemText>sleep_list.head</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>TCB2</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
