@@ -61,7 +61,7 @@ static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
 				current_task->prev = task;
 				
 				// Update list head if new task has the highest priority
-				if ((current_task == list->head) && (task->priority <= list->head->priority)) {
+				if ((current_task == list->head) && (task->priority < list->head->priority)) {
 					list->head = task;
 				}
 				return;
