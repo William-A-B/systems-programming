@@ -29,15 +29,52 @@ static _OS_tasklist_t wait_list = {.head = 0};
 static _OS_tasklist_t pending_list = {.head = 0};
 static _OS_tasklist_t sleep_list = {.head = 0};
 
+//static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
+//	if (!(list->head)) {
+//		task->next = task;
+//		task->prev = task;
+//		list->head = task;
+//	} else {
+//		task->next = list->head;
+//		task->prev = list->head->prev;
+//		task->prev->next = task;
+//		list->head->prev = task;
+//	}
+//}
+
+/* Add a task into the tasklist, sorted by priority */
 static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
+	// Insert at head, nothing in list
 	if (!(list->head)) {
 		task->next = task;
 		task->prev = task;
 		list->head = task;
 	} else {
+		OS_TCB_t *current_task = list->head;
+		
+		do {
+			// Check if task should be inserted before current task
+			if (task->priority < current_task->priority) {
+				task->next = current_task;
+				task->prev = current_task->prev;
+				current_task->prev->next = task;
+				current_task->prev = task;
+				
+				// Update list head if new task has the highest priority
+				if ((current_task == list->head) && (task->priority <= list->head->priority)) {
+					list->head = task;
+				}
+				return;
+			}
+			// Get the next task in the list
+			current_task = current_task->next;
+		} while (current_task != list->head);
+		
+		// Task priority is not less than any existing priority in the list
+		// Insert at end of list
 		task->next = list->head;
 		task->prev = list->head->prev;
-		task->prev->next = task;
+		list->head->prev->next = task;
 		list->head->prev = task;
 	}
 }
