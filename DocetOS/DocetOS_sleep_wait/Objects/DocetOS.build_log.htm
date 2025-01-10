@@ -28,19 +28,23 @@ Project File Date:  01/03/2025
 *** Using Compiler 'V6.22', folder: 'C:\Users\wabet\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Rebuild target 'STM32F407 Flash'
 assembling os_asm.s...
+compiling main.c...
+compiling retarget_io.c...
 assembling startup_stm32f407xx.s...
-compiling sleep.c...
 compiling system_stm32f4xx.c...
+compiling sleep.c...
+compiling mutex.c...
+compiling hardfault.c...
 compiling utils.c...
+src/OS/scheduler.c(46): warning: unused function 'print_task_list' [-Wunused-function]
+   46 | static void print_task_list(_OS_tasklist_t *task_list) {
+      |             ^~~~~~~~~~~~~~~
+1 warning generated.
 compiling scheduler.c...
 compiling os.c...
-compiling main.c...
-compiling mutex.c...
-compiling retarget_io.c...
-compiling hardfault.c...
 linking...
-Program Size: Code=13036 RO-data=1116 RW-data=136 ZI-data=3600  
-".\Objects\DocetOS.axf" - 0 Error(s), 0 Warning(s).
+Program Size: Code=13452 RO-data=1124 RW-data=136 ZI-data=4136  
+".\Objects\DocetOS.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -79,21 +83,21 @@ Package Vendor: Keil
 
    * Component: Keil::Compiler&ARM Compiler:I/O:STDOUT&User@1.2.0
       Source file:   Source/retarget_io.c
-      Source file:   Template/stdout_user.c
-      Source file:   Template/stdout_USART.c
       Source file:   Template/stdout_display.c
+      Source file:   Template/stdout_USART.c
+      Source file:   Template/stdout_user.c
 
    * Component: Keil::Compiler&ARM Compiler:I/O:TTY&User@1.2.0
       Source file:   Source/retarget_io.c
       Source file:   Template/tty_user.c
 
    * Component: Keil::Device:Startup@2.6.3
-      Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
-      Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
-      Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f407xx.s
       Source file:   MDK/Device/Source/ARM/STM32F40xxx_41xxx_OPT.s
+      Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
+      Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
+      Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f407xx.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

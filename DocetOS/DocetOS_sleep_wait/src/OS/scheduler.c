@@ -4,6 +4,7 @@
 #include "OS/os.h"
 
 #include "stm32f4xx.h"
+#include <stdio.h>
 
 #include <string.h>
 
@@ -41,6 +42,18 @@ static _OS_tasklist_t sleep_list = {.head = 0};
 //		list->head->prev = task;
 //	}
 //}
+
+static void print_task_list(_OS_tasklist_t *task_list) {
+	if (!task_list->head) {
+		printf("The list is empty.\n");
+		return;
+	}
+	OS_TCB_t *current_task = task_list->head;
+	do {
+			printf("Task Priority: %d\n", current_task->priority);
+			current_task = current_task->next;
+	} while (current_task != task_list->head);
+}
 
 /* Add a task into the tasklist, sorted by priority */
 static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
@@ -224,15 +237,64 @@ OS_TCB_t const * _OS_schedule(void) {
 	
 	// If there is a task in the list
 	if (task_list.head) {
-		// Get next task
-		task_list.head = task_list.head->next;
-		// Unset the YIELD bit
-		task_list.head->state &= ~TASK_STATE_YIELD;
-		// Return new task
-		return task_list.head;
+		OS_TCB_t *initial_task = task_list.head;
+		OS_TCB_t *current_task = task_list.head;
+		
+		// Previous task's priority is higher than current task
+		if (current_task->prev->priority < current_task->priority) {
+			// Loop round to first highest priority
+			do {
+				// Move to next task
+				current_task = current_task->next;
+				// Check if previous task has a lower priority
+				if (current_task->prev->priority > current_task->priority) {
+					// First highest priority task found, update head
+					task_list.head = current_task;
+					// Return highest priority task to run now
+					return task_list.head;
+				}
+			} while (current_task != initial_task);
+		}
+		else {
+			// Next task is the same priority so round robin scenario
+			if (current_task->next->priority == current_task->priority) {
+				// Move to next task
+				current_task = current_task->next;
+				// Update head
+				task_list.head = current_task;
+				// Return next task with same priority to run now
+				return current_task;
+			}
+			else {
+				// Next task is not same priority, and no higher priority in list, so loop round to first same priority task
+				do {
+					current_task = current_task->next;
+					// Same priority task found
+					if (current_task->priority == initial_task->priority) {
+						// Update head
+						task_list.head = current_task;
+						// Return first task with same priority to run now
+						return current_task;
+					}
+				} while (current_task != initial_task);
+			}
+		}
+		// No conditions met, so return same task
+		return current_task;
 	}
 	// No tasks are runnable, so return the idle task
 	return _OS_idleTCB_p;
+	
+	//	// If there is a task in the list
+//	if (task_list.head) {
+//		// Get next task
+//		task_list.head = task_list.head->next;
+//		// Unset the YIELD bit
+//		task_list.head->state &= ~TASK_STATE_YIELD;
+//		// Return new task
+//		return task_list.head;
+//	}
+	
 }
 
 /* Initialises a task control block (TCB) and its associated stack.  See os.h for details. */
