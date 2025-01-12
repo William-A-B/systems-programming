@@ -126,6 +126,40 @@ static void list_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
 	} while (__STREXW ((uint32_t) task, (uint32_t *)&(list->head)));
 }
 
+/* Add (push) the given task onto the list provided, sorting it by sleep time */
+static void list_sort_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
+	uint32_t failure = 1;
+	do {
+		OS_TCB_t *head = (OS_TCB_t *) __LDREXW ((uint32_t *)&(list->head));
+		// Task has shortest sleep time, so insert at top of list
+		if (head == NULL || task->wakeup_time <= head->wakeup_time) {
+			task->next = head;
+			failure = __STREXW ((uint32_t) task, (uint32_t *)&(list->head));
+		}
+		else {
+			OS_TCB_t *current_task = head;
+			OS_TCB_t *next_task = head->next;
+			do {
+				// Check if task should be inserted before next task
+				if (task->wakeup_time <= next_task->wakeup_time) {
+					task->next = next_task;
+					failure = __STREXW ((uint32_t) task, (uint32_t *)&(current_task->next));
+					break;
+				}
+				else if (!next_task) {
+					// No next task, insert at end of list
+					task->next = 0;
+					failure = __STREXW ((uint32_t) task, (uint32_t *)&(current_task->next));
+					break;
+				}
+				// Get the next task in the list
+				current_task = next_task;
+				next_task = next_task->next;
+			} while (1);
+		}
+	} while (failure);
+}
+
 /* Pop top task off the list and return it */
 static OS_TCB_t *list_pop_sl(_OS_tasklist_t *list) {
 	OS_TCB_t *head_task;
