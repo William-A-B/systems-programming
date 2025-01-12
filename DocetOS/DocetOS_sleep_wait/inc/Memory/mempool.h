@@ -16,7 +16,11 @@ typedef struct {
 
 /* Allocates a block from the pool */
 void *pool_allocate(mempool_t *pool);
+
+/* Returns a block to the pool, deallocating the memory */
 void pool_deallocate(mempool_t *pool, void *block);
+
+/* Initialises the memory pool to a given blocksize and number of blocks */
 void pool_init(mempool_t *pool, size_t blocksize, size_t blocks);
 
 #define pool_add pool_deallocate
