@@ -4,15 +4,19 @@
 #include "Utils/mode_utils.h"
 #include <inttypes.h>
 #include "OS/mutex.h"
+#include "OS/semaphore.h"
 
 static OS_mutex_t mutex = OS_MUTEX_STATIC_INITIALISER;
+static OS_semaphore_t sem = OS_SEMAPHORE_STATIC_INITIALISER(1);
 
 static void task1(void const *const args) {
 	(void) args;
 	while (1) {
+//		OS_semaphore_obtain(&sem);
 		OS_mutex_acquire(&mutex);
 		printf("AAAAA");
 		OS_mutex_release(&mutex);
+//		OS_semaphore_release(&sem);
 	}
 }
 
@@ -65,8 +69,8 @@ int main(void) {
 	
 	/* Initialise the TCBs using the two functions above */
 	success = success & OS_initialiseTCB(&TCB1, stack1+128, task1, NULL, 2);
-	success = success & OS_initialiseTCB(&TCB2, stack2+128, task2, NULL, 3);
-	success = success & OS_initialiseTCB(&TCB3, stack3+128, task3, NULL, 4);
+	success = success & OS_initialiseTCB(&TCB2, stack2+128, task2, NULL, 2);
+	success = success & OS_initialiseTCB(&TCB3, stack3+128, task3, NULL, 2);
 	success = success & OS_initialiseTCB(&TCB4, stack4+128, task4, NULL, 5);
 	
 	if (!success) {
