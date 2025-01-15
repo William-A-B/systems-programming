@@ -15,6 +15,8 @@
 /* Keil::Compiler&ARM Compiler:I/O:TTY&User@1.2.0 */
 #define RTE_Compiler_IO_TTY             /* Compiler I/O: TTY */
 #define RTE_Compiler_IO_TTY_User        /* Compiler I/O: TTY User */
+/* Keil::Device:Startup@2.6.3 */
+#define RTE_DEVICE_STARTUP_STM32F4XX    /* Device Startup for STM32F4 */
 
 
 #endif /* RTE_COMPONENTS_H */

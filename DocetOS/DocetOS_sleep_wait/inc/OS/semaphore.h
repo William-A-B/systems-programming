@@ -4,10 +4,11 @@
 #include <stdint.h>
 
 typedef struct {
+	uint32_t initial_tokens;
 	volatile uint32_t tokens;
 } OS_semaphore_t;
 
-#define OS_SEMAPHORE_STATIC_INITIALISER(initial_tokens) { .tokens = (initial_tokens) };
+#define OS_SEMAPHORE_STATIC_INITIALISER(initial_tokens) { initial_tokens, initial_tokens }
 
 /* Initialise a semaphore with a given number of tokens */
 void OS_semaphore_init(OS_semaphore_t *sem, uint32_t initial_tokens);

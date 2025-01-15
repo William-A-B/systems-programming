@@ -10,6 +10,7 @@
 ".\objects\utils.o"
 ".\objects\mempool.o"
 ".\objects\static_alloc.o"
+".\objects\queue.o"
 ".\objects\retarget_io.o"
 ".\objects\startup_stm32f407xx.o"
 ".\objects\system_stm32f4xx.o"
