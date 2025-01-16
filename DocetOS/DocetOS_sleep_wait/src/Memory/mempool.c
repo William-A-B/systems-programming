@@ -32,7 +32,6 @@ void pool_deallocate(mempool_t *pool, void *block, OS_mutex_t *mutex) {
 
 /* Initialises the memory pool to a given blocksize and number of blocks */
 void pool_init(mempool_t *pool, size_t blocksize, size_t blocks, OS_mutex_t *mutex) {
-	OS_mutex_acquire(mutex);
 	// Align the blocksize to 8 bytes
 	blocksize = (~(STATIC_ALLOC_ALIGNMENT-1))&(blocksize+(STATIC_ALLOC_ALIGNMENT-1));
 	
@@ -50,5 +49,4 @@ void pool_init(mempool_t *pool, size_t blocksize, size_t blocks, OS_mutex_t *mut
 		void *block = (void *)(static_pool_index + (i*blocksize));
 		pool_add(pool, block, mutex);
 	}
-	OS_mutex_release(mutex);
 }

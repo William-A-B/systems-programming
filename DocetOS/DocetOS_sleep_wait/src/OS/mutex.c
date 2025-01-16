@@ -40,7 +40,7 @@ void OS_mutex_release(OS_mutex_t *mutex) {
 		// Decrement counter to release mutex
 		mutex->counter--;
 		// Mutex is no longer acquired by any task, so notify all tasks and yield to cause context switch
-		if (mutex->counter == 0) {
+		if (!mutex->counter) {
 			mutex->TCB_task = 0;
 			OS_notifyAll();
 			OS_yield();

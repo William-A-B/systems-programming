@@ -8,8 +8,8 @@
 
 #include <string.h>
 
-void _OS_wait_delegate(_OS_SVC_StackFrame_t *);
-void _OS_sleep_delegate(_OS_SVC_StackFrame_t *);
+void _OS_wait_delegate(_OS_SVC_StackFrame_t const * const);
+void _OS_sleep_delegate(_OS_SVC_StackFrame_t const * const);
 
 static uint32_t notification_counter = 0;
 
@@ -173,7 +173,7 @@ static OS_TCB_t *list_pop_sl(_OS_tasklist_t *list) {
 	return head_task;
 }
 
-void _OS_sleep_delegate(_OS_SVC_StackFrame_t * const stack) {
+void _OS_sleep_delegate(_OS_SVC_StackFrame_t const * const stack) {
 	// Get the current running task's TCB
 	OS_TCB_t * const current_TCB = OS_currentTCB();
 	// Set the wakeup time of the task to be the total number of pre-emption ticks since last reset plus the sleep time
@@ -190,7 +190,7 @@ void _OS_sleep_delegate(_OS_SVC_StackFrame_t * const stack) {
 }
 
 /* Remove current task from task list and place it in waiting list */
-void _OS_wait_delegate(_OS_SVC_StackFrame_t * const stack) {
+void _OS_wait_delegate(_OS_SVC_StackFrame_t const * const stack) {
 	// If current notification counter is different to provided notification counter, then task shouldn't be held
 	if (stack->r0 != notification_counter) {
 		return;
@@ -210,7 +210,11 @@ void OS_notifyAll(void) {
 	// While wait list still has tasks in it
 	// Remove all tasks and add them to the pending list
 	OS_TCB_t *task;
-	notification_counter++;
+	uint32_t notification_count_temp;
+	do {
+		notification_count_temp = (uint32_t) __LDREXW ((uint32_t *)&(notification_counter));
+		notification_count_temp++;
+	} while (__STREXW ((uint32_t) notification_count_temp, (uint32_t *)&(notification_counter)));
 	while ((task = list_pop_sl(&wait_list))) {
 		list_push_sl(&pending_list, task);
 	}
@@ -229,16 +233,14 @@ OS_TCB_t const * _OS_schedule(void) {
 		list_add(&task_list, task);
 	}
 	// If tasks in sleep list and there is a task which should wake up
-	if (sleep_list.head && sleep_list.head->wakeup_time < OS_elapsedTicks()) {
-		do {
-			// Remove top awake task
-			OS_TCB_t *task = list_pop_sl(&sleep_list);
-			// Unset sleep bit
-			task->state &= ~TASK_STATE_SLEEP;
-			list_add(&task_list, task);
-			// Move to next task in sleep list
-			sleep_list.head = sleep_list.head->next;
-		} while (sleep_list.head->wakeup_time < OS_elapsedTicks() && sleep_list.head != NULL);
+	while (sleep_list.head && sleep_list.head->wakeup_time < OS_elapsedTicks()) {
+		// Remove top awake task
+		OS_TCB_t *task = list_pop_sl(&sleep_list);
+		// Unset sleep bit
+		task->state &= ~TASK_STATE_SLEEP;
+		list_add(&task_list, task);
+		// Move to next task in sleep list
+		sleep_list.head = sleep_list.head->next;
 	}
 	
 	// If there is a task in the list
