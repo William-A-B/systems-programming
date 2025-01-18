@@ -32,18 +32,6 @@ static _OS_tasklist_t wait_list = {.head = 0};
 static _OS_tasklist_t pending_list = {.head = 0};
 static _OS_tasklist_t sleep_list = {.head = 0};
 
-static void print_task_list(_OS_tasklist_t *task_list) {
-	if (!task_list->head) {
-		printf("The list is empty.\n");
-		return;
-	}
-	OS_TCB_t *current_task = task_list->head;
-	do {
-			printf("Task Priority: %d\n", current_task->priority);
-			current_task = current_task->next;
-	} while (current_task != task_list->head);
-}
-
 /* Add a task into the tasklist, sorted by priority */
 static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
 	// Insert at head, nothing in list
