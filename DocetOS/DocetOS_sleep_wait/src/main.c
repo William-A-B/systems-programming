@@ -194,7 +194,22 @@ static void task5(void const *const args) {
 	uint32_t *counter = pool_allocate(&pool, &pool_mutex);;
 	(*counter) = 0;
 	queue_put(&queue, (uint32_t *) counter, &queue_mutex);
-	for (uint32_t i = 0; i < 30; i++) {
+//	for (uint32_t i = 0; i < 30; i++) {
+//		OS_mutex_acquire(&mutex);
+//		printf("Task 5\r\n");
+//		OS_mutex_release(&mutex);
+//		// Retrieve counter value
+//		queue_get(&queue, (uint32_t **) &counter, &queue_mutex);
+//		// Increment counter value
+//		(*counter)++;
+//		// Print counter value
+//		OS_mutex_acquire(&mutex);
+//		printf("Counter = %" PRIu32 "\r\n", *counter);
+//		OS_mutex_release(&mutex);
+//		// Store counter value on queue
+//		queue_put(&queue, (uint32_t *) counter, &queue_mutex);
+//	}
+	while (1) {
 		OS_mutex_acquire(&mutex);
 		printf("Task 5\r\n");
 		OS_mutex_release(&mutex);
@@ -222,7 +237,24 @@ static void task5(void const *const args) {
 static void task6(void const *const args) {
 	(void) args;
 	uint32_t *counter = pool_allocate(&pool, &pool_mutex);
-	for (uint32_t i = 0; i < 30; i++) {
+//	for (uint32_t i = 0; i < 30; i++) {
+//		OS_mutex_acquire(&mutex);
+//		printf("Task 6\r\n");
+//		OS_mutex_release(&mutex);
+//		// Retrieve counter value
+//		queue_get(&queue, (uint32_t **) &counter, &queue_mutex);
+//		// Increment counter value
+//		(*counter)++;
+//		// Print counter value
+//		OS_mutex_acquire(&mutex);
+//		printf("Counter = %" PRIu32 "\r\n", *counter);
+//		OS_mutex_release(&mutex);
+//		if (i < 29) {
+//			// Store counter value on queue apart from when finished
+//			queue_put(&queue, (uint32_t *) counter, &queue_mutex);
+//		}
+//	}
+	while (1) {
 		OS_mutex_acquire(&mutex);
 		printf("Task 6\r\n");
 		OS_mutex_release(&mutex);
@@ -234,11 +266,10 @@ static void task6(void const *const args) {
 		OS_mutex_acquire(&mutex);
 		printf("Counter = %" PRIu32 "\r\n", *counter);
 		OS_mutex_release(&mutex);
-		if (i < 29) {
-			// Store counter value on queue apart from when finished
-			queue_put(&queue, (uint32_t *) counter, &queue_mutex);
-		}
+		// Store counter value on queue
+		queue_put(&queue, (uint32_t *) counter, &queue_mutex);
 	}
+	
 	pool_deallocate(&pool, counter, &pool_mutex);
 }
 
