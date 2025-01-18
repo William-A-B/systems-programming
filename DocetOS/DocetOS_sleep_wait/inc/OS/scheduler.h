@@ -56,6 +56,7 @@ uint32_t get_notification_counter(void);
 
 #ifdef OS_INTERNAL
 
+/* Fixed Priority Round-robin scheduler */
 OS_TCB_t const * _OS_schedule(void);
 
 typedef struct {

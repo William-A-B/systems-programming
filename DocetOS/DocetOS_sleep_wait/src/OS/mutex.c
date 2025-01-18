@@ -35,12 +35,11 @@ void OS_mutex_acquire(OS_mutex_t *mutex) {
 
 /* Release mutex and finish task */
 void OS_mutex_release(OS_mutex_t *mutex) {
-	// TODO WAB - do we need to check if the counter goes below zero?
 	if (mutex->TCB_task == OS_currentTCB()) {
 		// Decrement counter to release mutex
 		mutex->counter--;
 		// Mutex is no longer acquired by any task, so notify all tasks and yield to cause context switch
-		if (mutex->counter == 0) {
+		if (!mutex->counter) {
 			mutex->TCB_task = 0;
 			OS_notifyAll();
 			OS_yield();

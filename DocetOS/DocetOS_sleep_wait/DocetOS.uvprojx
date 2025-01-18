@@ -429,6 +429,16 @@
               <FileType>1</FileType>
               <FilePath>.\src\OS\mutex.c</FilePath>
             </File>
+            <File>
+              <FileName>semaphore.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\OS\semaphore.c</FilePath>
+            </File>
+            <File>
+              <FileName>semaphore.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\OS\semaphore.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -443,6 +453,41 @@
               <FileName>utils.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\Utils\utils.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Memory</GroupName>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Memory\mempool.c</FilePath>
+            </File>
+            <File>
+              <FileName>mempool.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\Memory\mempool.h</FilePath>
+            </File>
+            <File>
+              <FileName>static_alloc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Memory\static_alloc.c</FilePath>
+            </File>
+            <File>
+              <FileName>static_alloc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\Memory\static_alloc.h</FilePath>
+            </File>
+            <File>
+              <FileName>queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\Memory\queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>queue.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\Memory\queue.h</FilePath>
             </File>
           </Files>
         </Group>

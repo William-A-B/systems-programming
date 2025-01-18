@@ -8,8 +8,9 @@
 
 #include <string.h>
 
-void _OS_wait_delegate(_OS_SVC_StackFrame_t *);
-void _OS_sleep_delegate(_OS_SVC_StackFrame_t *);
+// SVC delegate function declarations
+void _OS_wait_delegate(_OS_SVC_StackFrame_t const * const);
+void _OS_sleep_delegate(_OS_SVC_StackFrame_t const * const);
 
 static uint32_t notification_counter = 0;
 
@@ -25,35 +26,11 @@ static uint32_t notification_counter = 0;
 	 OS_schedule() in this implementation.
 */
 
+// Task lists for different states
 static _OS_tasklist_t task_list = {.head = 0};
 static _OS_tasklist_t wait_list = {.head = 0};
 static _OS_tasklist_t pending_list = {.head = 0};
 static _OS_tasklist_t sleep_list = {.head = 0};
-
-//static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
-//	if (!(list->head)) {
-//		task->next = task;
-//		task->prev = task;
-//		list->head = task;
-//	} else {
-//		task->next = list->head;
-//		task->prev = list->head->prev;
-//		task->prev->next = task;
-//		list->head->prev = task;
-//	}
-//}
-
-static void print_task_list(_OS_tasklist_t *task_list) {
-	if (!task_list->head) {
-		printf("The list is empty.\n");
-		return;
-	}
-	OS_TCB_t *current_task = task_list->head;
-	do {
-			printf("Task Priority: %d\n", current_task->priority);
-			current_task = current_task->next;
-	} while (current_task != task_list->head);
-}
 
 /* Add a task into the tasklist, sorted by priority */
 static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
@@ -91,7 +68,7 @@ static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
 		list->head->prev = task;
 	}
 }
-
+/* Remove a task from a list */
 static void list_remove(_OS_tasklist_t *list, OS_TCB_t *task) {
 	// Item at head of list
 	if (list->head == task) {
@@ -126,6 +103,40 @@ static void list_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
 	} while (__STREXW ((uint32_t) task, (uint32_t *)&(list->head)));
 }
 
+/* Add (push) the given task onto the list provided, sorting it by sleep time */
+static void list_sort_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
+	uint32_t failure = 1;
+	do {
+		OS_TCB_t *head = (OS_TCB_t *) __LDREXW ((uint32_t *)&(list->head));
+		// Task has shortest sleep time, so insert at top of list
+		if (head == NULL || task->wakeup_time <= head->wakeup_time) {
+			task->next = head;
+			failure = __STREXW ((uint32_t) task, (uint32_t *)&(list->head));
+		}
+		else {
+			OS_TCB_t *current_task = head;
+			OS_TCB_t *next_task = head->next;
+			do {
+				// Check if task should be inserted before next task
+				if (task->wakeup_time <= next_task->wakeup_time) {
+					task->next = next_task;
+					failure = __STREXW ((uint32_t) task, (uint32_t *)&(current_task->next));
+					break;
+				}
+				else if (!next_task) {
+					// No next task, insert at end of list
+					task->next = 0;
+					failure = __STREXW ((uint32_t) task, (uint32_t *)&(current_task->next));
+					break;
+				}
+				// Get the next task in the list
+				current_task = next_task;
+				next_task = next_task->next;
+			} while (1);
+		}
+	} while (failure);
+}
+
 /* Pop top task off the list and return it */
 static OS_TCB_t *list_pop_sl(_OS_tasklist_t *list) {
 	OS_TCB_t *head_task;
@@ -139,7 +150,7 @@ static OS_TCB_t *list_pop_sl(_OS_tasklist_t *list) {
 	return head_task;
 }
 
-void _OS_sleep_delegate(_OS_SVC_StackFrame_t * const stack) {
+void _OS_sleep_delegate(_OS_SVC_StackFrame_t const * const stack) {
 	// Get the current running task's TCB
 	OS_TCB_t * const current_TCB = OS_currentTCB();
 	// Set the wakeup time of the task to be the total number of pre-emption ticks since last reset plus the sleep time
@@ -149,14 +160,14 @@ void _OS_sleep_delegate(_OS_SVC_StackFrame_t * const stack) {
 	
 	// Removes sleeping tasks from task list and adds into sleeping list
 	list_remove(&task_list, current_TCB);
-	list_push_sl(&sleep_list, current_TCB);
+	list_sort_push_sl(&sleep_list, current_TCB);
 	
 	// Initiate task switch
 	SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
 }
 
 /* Remove current task from task list and place it in waiting list */
-void _OS_wait_delegate(_OS_SVC_StackFrame_t * const stack) {
+void _OS_wait_delegate(_OS_SVC_StackFrame_t const * const stack) {
 	// If current notification counter is different to provided notification counter, then task shouldn't be held
 	if (stack->r0 != notification_counter) {
 		return;
@@ -164,6 +175,8 @@ void _OS_wait_delegate(_OS_SVC_StackFrame_t * const stack) {
 	// Get current task and remove it from task list and place it in waiting list
 	OS_TCB_t *current_task = OS_currentTCB();
 	list_remove(&task_list, current_task);
+	// Set the yield bit
+	current_task->state |= TASK_STATE_YIELD;
 	list_push_sl(&wait_list, current_task);
 	// Set PendSV bit to trigger context switch
 	SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
@@ -174,70 +187,42 @@ void OS_notifyAll(void) {
 	// While wait list still has tasks in it
 	// Remove all tasks and add them to the pending list
 	OS_TCB_t *task;
-	notification_counter++;
+	uint32_t notification_count_temp;
+	do {
+		notification_count_temp = (uint32_t) __LDREXW ((uint32_t *)&(notification_counter));
+		notification_count_temp++;
+	} while (__STREXW ((uint32_t) notification_count_temp, (uint32_t *)&(notification_counter)));
 	while ((task = list_pop_sl(&wait_list))) {
 		list_push_sl(&pending_list, task);
 	}
 }
 
-///* Round-robin scheduler */
-//OS_TCB_t const * _OS_schedule(void) {
-
-//	// While pending list is not empty, remove them and add them into the round robin
-//	while (pending_list.head != NULL) {
-//		OS_TCB_t *task = list_pop_sl(&pending_list);
-//		list_add(&task_list, task);
-//	}
-//	// If there is a task in the list
-//	if (task_list.head) {
-//		// Store current head to compare with loop
-//		OS_TCB_t const * const currentHead = task_list.head;
-//		do {
-//			// Get next task
-//			task_list.head = task_list.head->next;
-//			// If task is not asleep, unset the yield bit, and return new task
-//			if (!(task_list.head->state & TASK_STATE_SLEEP)) {
-//				task_list.head->state &= ~TASK_STATE_YIELD;
-//				return task_list.head;
-//			}
-//			// If task wakup time is less than the curernt time, then wake up task and unset the yield and sleep bit
-//			// Return new task
-//			if (task_list.head->wakeup_time < OS_elapsedTicks()) {
-//				task_list.head->state &= ~(TASK_STATE_SLEEP | TASK_STATE_YIELD);
-//				return task_list.head;
-//			}
-//		} while (task_list.head != currentHead);
-//		
-//	}
-//	// No tasks are runnable, so return the idle task
-//	return _OS_idleTCB_p;
-//}
-
-/* Round-robin scheduler v2 */
+/* Fixed Priority Round-robin scheduler */
 OS_TCB_t const * _OS_schedule(void) {
 
 	// While pending list is not empty, remove them and add them into the round robin
 	while (pending_list.head != NULL) {
+		// Retrieve top task from pending list
 		OS_TCB_t *task = list_pop_sl(&pending_list);
+		// Unset the yield bit
+		task->state &= ~TASK_STATE_YIELD;
+		// Add back into task list
 		list_add(&task_list, task);
 	}
-	// If tasks in sleep list
-	if (sleep_list.head) {
-		OS_TCB_t const * const current_sleep_head = sleep_list.head;
-		do {
-			// If task wakup time is less than the curernt time, then wake up task and unset the sleep bit
-			if (sleep_list.head->wakeup_time < OS_elapsedTicks()) {
-				OS_TCB_t *task = list_pop_sl(&sleep_list);
-				task->state &= ~TASK_STATE_SLEEP;
-				list_add(&task_list, task);
-			}
-			sleep_list.head = sleep_list.head->next;
-		} while (sleep_list.head != current_sleep_head);
+	// If tasks in sleep list and there is a task which should wake up
+	while (sleep_list.head && sleep_list.head->wakeup_time < OS_elapsedTicks()) {
+		// Remove top awake task
+		OS_TCB_t *task = list_pop_sl(&sleep_list);
+		// Unset sleep bit
+		task->state &= ~TASK_STATE_SLEEP;
+		list_add(&task_list, task);
+		// Move to next task in sleep list
+		sleep_list.head = sleep_list.head->next;
 	}
 	
 	// If there is a task in the list
 	if (task_list.head) {
-		OS_TCB_t *initial_task = task_list.head;
+		OS_TCB_t const * const initial_task = task_list.head;
 		OS_TCB_t *current_task = task_list.head;
 		
 		// Previous task's priority is higher than current task
@@ -284,17 +269,6 @@ OS_TCB_t const * _OS_schedule(void) {
 	}
 	// No tasks are runnable, so return the idle task
 	return _OS_idleTCB_p;
-	
-	//	// If there is a task in the list
-//	if (task_list.head) {
-//		// Get next task
-//		task_list.head = task_list.head->next;
-//		// Unset the YIELD bit
-//		task_list.head->state &= ~TASK_STATE_YIELD;
-//		// Return new task
-//		return task_list.head;
-//	}
-	
 }
 
 /* Initialises a task control block (TCB) and its associated stack.  See os.h for details. */
