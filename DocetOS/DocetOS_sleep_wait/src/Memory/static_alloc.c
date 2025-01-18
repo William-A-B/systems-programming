@@ -4,9 +4,12 @@
 // 16KB pool size
 #define STATIC_ALLOC_POOLSIZE 16384UL
 
+// Pool to allocate memory from
 static uint8_t static_pool[STATIC_ALLOC_POOLSIZE] __attribute__ (( aligned(STATIC_ALLOC_ALIGNMENT) ));
+// Index of allocated space
 static size_t pool_index = STATIC_ALLOC_POOLSIZE;
 
+/* Allocates a set number of byes from the memory pool */
 void * static_alloc(size_t bytes) {
 	
 	// Requested num bytes fits within remaining pool

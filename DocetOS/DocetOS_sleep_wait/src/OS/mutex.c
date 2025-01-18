@@ -35,7 +35,6 @@ void OS_mutex_acquire(OS_mutex_t *mutex) {
 
 /* Release mutex and finish task */
 void OS_mutex_release(OS_mutex_t *mutex) {
-	// TODO WAB - do we need to check if the counter goes below zero?
 	if (mutex->TCB_task == OS_currentTCB()) {
 		// Decrement counter to release mutex
 		mutex->counter--;

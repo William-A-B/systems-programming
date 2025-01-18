@@ -15,9 +15,9 @@ typedef struct {
 #define QUEUE_INITIALISER { .data = {0}, .insert = 0, .remove = 0 }
 
 /* Add an element to the queue */
-uint32_t queue_put(queue_t * queue, uint32_t *data, OS_mutex_t *mutex);
+void queue_put(queue_t * queue, uint32_t *data, OS_mutex_t *mutex);
 
 /* Retrieve an element from the queue */
-uint32_t queue_get(queue_t * queue, uint32_t **data, OS_mutex_t *mutex);
+void queue_get(queue_t * queue, uint32_t **data, OS_mutex_t *mutex);
 
 #endif /* QUEUE_H */

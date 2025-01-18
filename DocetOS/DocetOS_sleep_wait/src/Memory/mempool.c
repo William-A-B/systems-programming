@@ -30,8 +30,20 @@ void pool_deallocate(mempool_t *pool, void *block, OS_mutex_t *mutex) {
 	OS_mutex_release(mutex);
 }
 
+/** Inline function to add blocks of memory to the pool to be used 
+* Equivalent to pool_deallocate, however only called in the initialisation
+* so does not require a mutex.
+*/
+static inline void pool_add(mempool_t *pool, void *block) {
+	// Point next block to head
+	mempool_item_t *mempool_block = block;
+	mempool_block->next = pool->head;
+	// Update head to point to new free block
+	pool->head = mempool_block;
+}
+
 /* Initialises the memory pool to a given blocksize and number of blocks */
-void pool_init(mempool_t *pool, size_t blocksize, size_t blocks, OS_mutex_t *mutex) {
+void pool_init(mempool_t *pool, size_t blocksize, size_t blocks) {
 	// Align the blocksize to 8 bytes
 	blocksize = (~(STATIC_ALLOC_ALIGNMENT-1))&(blocksize+(STATIC_ALLOC_ALIGNMENT-1));
 	
@@ -47,6 +59,6 @@ void pool_init(mempool_t *pool, size_t blocksize, size_t blocks, OS_mutex_t *mut
 	for (size_t i = 0; i < blocks; i++) {
 		// Calculate address of current block
 		void *block = (void *)(static_pool_index + (i*blocksize));
-		pool_add(pool, block, mutex);
+		pool_add(pool, block);
 	}
 }

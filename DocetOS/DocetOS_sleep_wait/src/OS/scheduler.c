@@ -8,6 +8,7 @@
 
 #include <string.h>
 
+// SVC delegate function declarations
 void _OS_wait_delegate(_OS_SVC_StackFrame_t const * const);
 void _OS_sleep_delegate(_OS_SVC_StackFrame_t const * const);
 
@@ -25,23 +26,11 @@ static uint32_t notification_counter = 0;
 	 OS_schedule() in this implementation.
 */
 
+// Task lists for different states
 static _OS_tasklist_t task_list = {.head = 0};
 static _OS_tasklist_t wait_list = {.head = 0};
 static _OS_tasklist_t pending_list = {.head = 0};
 static _OS_tasklist_t sleep_list = {.head = 0};
-
-//static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
-//	if (!(list->head)) {
-//		task->next = task;
-//		task->prev = task;
-//		list->head = task;
-//	} else {
-//		task->next = list->head;
-//		task->prev = list->head->prev;
-//		task->prev->next = task;
-//		list->head->prev = task;
-//	}
-//}
 
 static void print_task_list(_OS_tasklist_t *task_list) {
 	if (!task_list->head) {
@@ -91,7 +80,7 @@ static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
 		list->head->prev = task;
 	}
 }
-
+/* Remove a task from a list */
 static void list_remove(_OS_tasklist_t *list, OS_TCB_t *task) {
 	// Item at head of list
 	if (list->head == task) {
@@ -353,50 +342,3 @@ void _OS_taskExit_delegate(void) {
 uint32_t get_notification_counter(void) {
 	return notification_counter;
 }
-
-///* Round-robin scheduler */
-//OS_TCB_t const * _OS_schedule(void) {
-
-//	// While pending list is not empty, remove them and add them into the round robin
-//	while (pending_list.head != NULL) {
-//		OS_TCB_t *task = list_pop_sl(&pending_list);
-//		list_add(&task_list, task);
-//	}
-//	// If tasks in sleep list
-//	if (sleep_list.head) {
-//		OS_TCB_t const * const current_sleep_head = sleep_list.head;
-//		do {
-//			// If task wakup time is less than the curernt time, then wake up task and unset the sleep bit
-//			if (sleep_list.head->wakeup_time < OS_elapsedTicks()) {
-//				OS_TCB_t *task = list_pop_sl(&sleep_list);
-//				task->state &= ~TASK_STATE_SLEEP;
-//				list_add(&task_list, task);
-//			}
-//			sleep_list.head = sleep_list.head->next;
-//		} while (sleep_list.head != current_sleep_head);
-//	}
-//
-//	// If there is a task in the list
-//	if (task_list.head) {
-//		// Store current head to compare with loop
-//		OS_TCB_t const * const currentHead = task_list.head;
-//		do {
-//			// Get next task
-//			task_list.head = task_list.head->next;
-//			// If task is not asleep, unset the yield bit, and return new task
-//			if (!(task_list.head->state & TASK_STATE_SLEEP)) {
-//				task_list.head->state &= ~TASK_STATE_YIELD;
-//				return task_list.head;
-//			}
-//			// If task wakup time is less than the curernt time, then wake up task and unset the yield and sleep bit
-//			// Return new task
-//			if (task_list.head->wakeup_time < OS_elapsedTicks()) {
-//				task_list.head->state &= ~(TASK_STATE_SLEEP | TASK_STATE_YIELD);
-//				return task_list.head;
-//			}
-//		} while (task_list.head != currentHead);
-//		
-//	}
-//	// No tasks are runnable, so return the idle task
-//	return _OS_idleTCB_p;
-//}
