@@ -1,0 +1,61 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             utils, CODE, READONLY
+    2 00000000         
+    3 00000000                 EXPORT           getPSR
+    4 00000000                 EXPORT           getCONTROL
+    5 00000000         
+    6 00000000         getPSR
+    7 00000000 F3EF 8003       MRS              r0, PSR     ; Move PSR into r0
+    8 00000004 4770            BX               lr          ; Return
+    9 00000006         
+   10 00000006         getCONTROL
+   11 00000006 F3EF 8014       MRS              r0, CONTROL ; Move CONTROL into
+                                                             r0
+   12 0000000A 4770            BX               lr          ; Return
+   13 0000000C         
+   14 0000000C                 END
+Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4 --fpu=
+SoftVFP --depend=.\objects\mode_utils.d -o.\objects\mode_utils.o -I.\RTE\_STM32
+F407_Flash -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include -IC:\Keil_v
+5\ARM\PACK\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include 
+-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\3.0.0\Drivers\CMSIS\Device\ST\STM32F4x
+x\Include --predefine="__UVISION_VERSION SETA 541" --predefine="STM32F407xx SET
+A 1" --predefine="_RTE_ SETA 1" --list=.\listings\mode_utils.lst asm\mode_utils
+.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+getCONTROL 00000006
+
+Symbol: getCONTROL
+   Definitions
+      At line 10 in file asm\mode_utils.s
+   Uses
+      At line 4 in file asm\mode_utils.s
+Comment: getCONTROL used once
+getPSR 00000000
+
+Symbol: getPSR
+   Definitions
+      At line 6 in file asm\mode_utils.s
+   Uses
+      At line 3 in file asm\mode_utils.s
+Comment: getPSR used once
+utils 00000000
+
+Symbol: utils
+   Definitions
+      At line 1 in file asm\mode_utils.s
+   Uses
+      None
+Comment: utils unused
+3 symbols
+336 symbols in table
