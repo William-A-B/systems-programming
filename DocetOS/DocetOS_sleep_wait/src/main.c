@@ -33,7 +33,7 @@ typedef struct {
  * @param args - Parameter for passing arguments across to task
  */
 static void task1(void const *const args) {
-	(void) args;
+	(void) args; // Disable unused parameter warning
 	// Initialise task name data
 	packet_t *task_name = pool_allocate(&pool, &pool_mutex);
 	task_name->id = 1;
@@ -43,13 +43,12 @@ static void task1(void const *const args) {
 	task_priority->id = 2;
 	strncpy(task_priority->data, "Priority 1", 15);
 	
-	// Allocate data packet and add to queue for another task to use
+	// Allocate data packets, insert data, and add to queue for another task to use
 	packet_t *data_packet_1 = pool_allocate(&pool, &pool_mutex);
 	packet_t *data_packet_2 = pool_allocate(&pool, &pool_mutex);
 	
 	data_packet_1->id = 1;
 	data_packet_2->id = 2;
-	
 	strncpy(data_packet_1->data, "Number 1", 15);
 	strncpy(data_packet_2->data, "Number 2", 15);
 	
@@ -57,7 +56,7 @@ static void task1(void const *const args) {
 	queue_put(&queue, (uint32_t *) data_packet_1, &queue_mutex);
 	queue_put(&queue, (uint32_t *) data_packet_2, &queue_mutex);
 	
-	// Display data
+	// Display task data
 	for (uint32_t i = 0; i < 6; i++) {
 		OS_mutex_acquire(&mutex);
 		printf("%s, ", task_name->data);
@@ -75,7 +74,7 @@ static void task1(void const *const args) {
  * @param args - Parameter for passing arguments across to task
  */
 static void task2(void const *const args) {
-	(void) args;
+	(void) args; // Disable unused parameter warning
 	// Initialise task name data
 	packet_t *task_name = pool_allocate(&pool, &pool_mutex);
 	task_name->id = 1;
@@ -85,9 +84,12 @@ static void task2(void const *const args) {
 	task_priority->id = 2;
 	strncpy(task_priority->data, "Priority 1", 15);
 
-	// Display data
+	// Display task data
 	for (uint32_t i = 0; i < 6; i++) {
 		if (i == 3) {
+			// Send task to sleep to wake up later on
+			// Shows how a higher priority task will be run even when 
+			// lower priority tasks are running
 			OS_sleep(100);
 		}
 		OS_mutex_acquire(&mutex);
@@ -107,7 +109,7 @@ static void task2(void const *const args) {
  * @param args - Parameter for passing arguments across to task
  */
 static void task3(void const *const args) {
-	(void) args;
+	(void) args; // Disable unused parameter warning
 	// Initialise task name data
 	packet_t *task_name = pool_allocate(&pool, &pool_mutex);
 	task_name->id = 1;
@@ -121,7 +123,7 @@ static void task3(void const *const args) {
 	packet_t *data_packet = 0;
 	queue_get(&queue, (uint32_t **) &data_packet, &queue_mutex);
 	
-	// Display data
+	// Display task data
 	for (uint32_t i = 0; i < 6; i++) {
 		OS_mutex_acquire(&mutex);
 		printf("%s, ", task_name->data);
@@ -149,7 +151,7 @@ static void task3(void const *const args) {
  * @param args - Parameter for passing arguments across to task
  */
 static void task4(void const *const args) {
-	(void) args;
+	(void) args; // Disable unused parameter warning
 	// Initialise task name data
 	packet_t *task_name = pool_allocate(&pool, &pool_mutex);
 	task_name->id = 1;
@@ -190,26 +192,14 @@ static void task4(void const *const args) {
  * @param args - Parameter for passing arguments across to task
  */
 static void task5(void const *const args) {
-	(void) args;
+	(void) args; // Disable unused parameter warning
+	// Allocate memory for a counter variable
 	uint32_t *counter = pool_allocate(&pool, &pool_mutex);;
 	(*counter) = 0;
+	// Place the counter variable pointer on the queue
 	queue_put(&queue, (uint32_t *) counter, &queue_mutex);
-//	for (uint32_t i = 0; i < 30; i++) {
-//		OS_mutex_acquire(&mutex);
-//		printf("Task 5\r\n");
-//		OS_mutex_release(&mutex);
-//		// Retrieve counter value
-//		queue_get(&queue, (uint32_t **) &counter, &queue_mutex);
-//		// Increment counter value
-//		(*counter)++;
-//		// Print counter value
-//		OS_mutex_acquire(&mutex);
-//		printf("Counter = %" PRIu32 "\r\n", *counter);
-//		OS_mutex_release(&mutex);
-//		// Store counter value on queue
-//		queue_put(&queue, (uint32_t *) counter, &queue_mutex);
-//	}
-	while (1) {
+	// Loop to retrieve the counter variable, increment it, and store it back on the queue
+	for (uint32_t i = 0; i < 30; i++) {
 		OS_mutex_acquire(&mutex);
 		printf("Task 5\r\n");
 		OS_mutex_release(&mutex);
@@ -224,6 +214,7 @@ static void task5(void const *const args) {
 		// Store counter value on queue
 		queue_put(&queue, (uint32_t *) counter, &queue_mutex);
 	}
+	// Deallocate counter variable memory
 	pool_deallocate(&pool, counter, &pool_mutex);
 }
 
@@ -235,26 +226,11 @@ static void task5(void const *const args) {
  * @param args - Parameter for passing arguments across to task
  */
 static void task6(void const *const args) {
-	(void) args;
+	(void) args; // Disable unused parameter warning
+	// Allocate memory for a counter variable
 	uint32_t *counter = pool_allocate(&pool, &pool_mutex);
-//	for (uint32_t i = 0; i < 30; i++) {
-//		OS_mutex_acquire(&mutex);
-//		printf("Task 6\r\n");
-//		OS_mutex_release(&mutex);
-//		// Retrieve counter value
-//		queue_get(&queue, (uint32_t **) &counter, &queue_mutex);
-//		// Increment counter value
-//		(*counter)++;
-//		// Print counter value
-//		OS_mutex_acquire(&mutex);
-//		printf("Counter = %" PRIu32 "\r\n", *counter);
-//		OS_mutex_release(&mutex);
-//		if (i < 29) {
-//			// Store counter value on queue apart from when finished
-//			queue_put(&queue, (uint32_t *) counter, &queue_mutex);
-//		}
-//	}
-	while (1) {
+	// Loop to retrieve the counter variable, increment it, and store it back on the queue
+	for (uint32_t i = 0; i < 30; i++) {
 		OS_mutex_acquire(&mutex);
 		printf("Task 6\r\n");
 		OS_mutex_release(&mutex);
@@ -266,10 +242,12 @@ static void task6(void const *const args) {
 		OS_mutex_acquire(&mutex);
 		printf("Counter = %" PRIu32 "\r\n", *counter);
 		OS_mutex_release(&mutex);
-		// Store counter value on queue
-		queue_put(&queue, (uint32_t *) counter, &queue_mutex);
+		if (i < 29) {
+			// Store counter value on queue apart from when finished
+			queue_put(&queue, (uint32_t *) counter, &queue_mutex);
+		}
 	}
-	
+	// Deallocate counter variable memory
 	pool_deallocate(&pool, counter, &pool_mutex);
 }
 

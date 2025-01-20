@@ -1,7 +1,13 @@
 #include "OS/mutex.h"
 #include "OS/os.h"
 
-/* Acquire the mutex to prevent other tasks from running */
+/**
+ * @brief Acquire the mutex to prevent other tasks from running
+ * If the same task is trying to acquire the mutex again, 
+ * it will not be blocked and will be allowed to acquire the mutex again
+ * 
+ * @param mutex - The mutex to attempt to acquire
+ */
 void OS_mutex_acquire(OS_mutex_t *mutex) {
 	uint32_t failure = 0;
 	OS_TCB_t *current_TCB = OS_currentTCB();
@@ -33,7 +39,13 @@ void OS_mutex_acquire(OS_mutex_t *mutex) {
 	} while (failure);
 }
 
-/* Release mutex and finish task */
+
+/**
+ * @brief Release the mutex and notify all waiting tasks
+ * Yield to cause context switch and switch tasks
+ * 
+ * @param mutex - The mutex to release
+ */
 void OS_mutex_release(OS_mutex_t *mutex) {
 	if (mutex->TCB_task == OS_currentTCB()) {
 		// Decrement counter to release mutex

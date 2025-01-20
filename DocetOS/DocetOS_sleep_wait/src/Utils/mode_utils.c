@@ -7,6 +7,9 @@
 
 void check_status_delegate(_OS_SVC_StackFrame_t *);
 
+/**
+ * @brief Report the state of the CPU
+ */
 void reportState(void) {
 	
 	uint32_t PSR = getPSR();

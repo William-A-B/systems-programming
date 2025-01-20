@@ -2,13 +2,23 @@
 #include <stdint.h>
 #include "OS/os.h"
 
-/* Initialise a semaphore with a given number of tokens */
+/**
+ * @brief Non Static Initialisation of Semaphore
+ * Allows for the initialisation of a semaphore with a given number of tokens
+ * 
+ * @param sem - Semaphore to be initialised
+ * @param initial_tokens - Number of tokens to initialise the semaphore with
+ */
 void OS_semaphore_init(OS_semaphore_t *sem, uint32_t initial_tokens) {
 	sem->tokens = initial_tokens;
 	sem->initial_tokens = initial_tokens;
 }
 
-/* Obtain a token from the semaphore container */
+/**
+ * @brief Obtain a token from the semaphore container
+ * 
+ * @param sem - Semaphore to obtain token from
+ */
 void OS_semaphore_obtain(OS_semaphore_t * const sem) {
 	uint32_t notification_counter;
 	uint32_t failure = 1;
@@ -28,7 +38,11 @@ void OS_semaphore_obtain(OS_semaphore_t * const sem) {
 	OS_notifyAll();
 }
 
-/* Release a token from the semaphore container */
+/**
+ * @brief Release a token from the semaphore container
+ * 
+ * @param sem - Semaphore to release token from
+ */
 void OS_semaphore_release(OS_semaphore_t * const sem) {
 	uint32_t notification_counter;
 	uint32_t failure = 1;

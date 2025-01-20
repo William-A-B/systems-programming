@@ -22,23 +22,23 @@ Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
 W:\Year_4\Systems_Programming_for_ARM\systems-programming\Allocation\mempool\mempool.uvprojx
-Project File Date:  10/25/2024
+Project File Date:  01/12/2025
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.22', folder: 'C:\Users\wabet\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Rebuild target 'STM32F407 Flash'
-compiling system_stm32f4xx.c...
-compiling retarget_io.c...
 assembling startup_stm32f407xx.s...
-compiling utils.c...
-compiling mempool.c...
 compiling static_alloc.c...
+compiling utils.c...
+compiling hardfault.c...
+compiling retarget_io.c...
+compiling system_stm32f4xx.c...
 src/main.c(21): warning: unused variable 'poolElements' [-Wunused-variable]
    21 |         static packet_t poolElements[10];
       |                         ^~~~~~~~~~~~
 1 warning generated.
 compiling main.c...
-compiling hardfault.c...
+compiling mempool.c...
 linking...
 Program Size: Code=11596 RO-data=1300 RW-data=116 ZI-data=18276  
 ".\Objects\mempool.axf" - 0 Error(s), 1 Warning(s).
@@ -79,22 +79,22 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE@6.1.0
 
    * Component: Keil::Compiler&ARM Compiler:I/O:STDOUT&User@1.2.0
-      Source file:   Template/stdout_display.c
-      Source file:   Template/stdout_USART.c
       Source file:   Source/retarget_io.c
+      Source file:   Template/stdout_USART.c
+      Source file:   Template/stdout_display.c
       Source file:   Template/stdout_user.c
 
    * Component: Keil::Compiler&ARM Compiler:I/O:TTY&User@1.2.0
-      Source file:   Template/tty_user.c
       Source file:   Source/retarget_io.c
+      Source file:   Template/tty_user.c
 
    * Component: Keil::Device:Startup@2.6.3
-      Source file:   MDK/Device/Source/ARM/STM32F40xxx_41xxx_OPT.s
+      Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f407xx.s
       Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
-      Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
+      Source file:   MDK/Device/Source/ARM/STM32F40xxx_41xxx_OPT.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

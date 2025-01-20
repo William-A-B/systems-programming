@@ -9,7 +9,12 @@ static uint8_t static_pool[STATIC_ALLOC_POOLSIZE] __attribute__ (( aligned(STATI
 // Index of allocated space
 static size_t pool_index = STATIC_ALLOC_POOLSIZE;
 
-/* Allocates a set number of byes from the memory pool */
+/**
+ * @brief Allocates a set number of byes from the memory pool
+ * 
+ * @param bytes - Number of bytes to allocate
+ * @return void* - Pointer to the index of the allocated pool of memory
+ */
 void * static_alloc(size_t bytes) {
 	
 	// Requested num bytes fits within remaining pool

@@ -142,11 +142,12 @@ ARM Macro Assembler    Page 3
               00000000 
 Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4 --fpu=
 SoftVFP --depend=.\objects\os_asm.d -o.\objects\os_asm.o -I.\RTE\_STM32F407_Fla
-sh -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include -IC:\Keil_v5\ARM\PA
-CK\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include -IC:\Kei
-l_v5\ARM\PACK\Keil\STM32F4xx_DFP\3.0.0\Drivers\CMSIS\Device\ST\STM32F4xx\Includ
-e --predefine="__UVISION_VERSION SETA 541" --predefine="STM32F407xx SETA 1" --p
-redefine="_RTE_ SETA 1" --list=.\listings\os_asm.lst src\OS\os_asm.s
+sh -IC:\Users\wabet\AppData\Local\Arm\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include 
+-IC:\Users\wabet\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSI
+S\Device\ST\STM32F4xx\Include -IC:\Users\wabet\AppData\Local\Arm\Packs\Keil\STM
+32F4xx_DFP\3.0.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__EVAL 
+SETA 1" --predefine="__UVISION_VERSION SETA 541" --predefine="STM32F407xx SETA 
+1" --predefine="_RTE_ SETA 1" --list=.\listings\os_asm.lst src\OS\os_asm.s
 
 
 
@@ -303,4 +304,4 @@ External symbols
       At line 86 in file src\OS\os_asm.s
 
 8 symbols
-351 symbols in table
+352 symbols in table

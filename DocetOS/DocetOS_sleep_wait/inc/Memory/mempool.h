@@ -18,13 +18,31 @@ typedef struct {
 // Static initialiser for the memory pool
 #define MEMPOOL_INITIALISER { .head = 0 }
 
-/* Allocates a block from the pool */
+/**
+ * @brief Allocates a block of memory from the memory pool
+ * 
+ * @param pool - Memory pool to allocate from
+ * @param mutex - Mutex to protect the pool from concurrent modification
+ * @return void* - Pointer to the allocated block of memory
+ */
 void *pool_allocate(mempool_t *pool, OS_mutex_t *mutex);
 
-/* Returns a block to the pool, deallocating the memory */
+/**
+ * @brief Returns a block to the pool, deallocating the memory
+ * 
+ * @param pool - Memory pool to deallocate from
+ * @param block - Block of memory to deallocate
+ * @param mutex - Mutex to protect the pool from concurrent modification
+ */
 void pool_deallocate(mempool_t *pool, void *block, OS_mutex_t *mutex);
 
-/* Initialises the memory pool to a given blocksize and number of blocks */
+/**
+ * @brief Initialises the memory pool to a given blocksize and number of blocks
+ * 
+ * @param pool - A pointer to the memory pool to initialise
+ * @param blocksize - Size of each block in the pool (bytes)
+ * @param blocks - Number of blocks to allocate in the pool
+ */
 void pool_init(mempool_t *pool, size_t blocksize, size_t blocks);
 
 #endif /* MEMPOOL_H */

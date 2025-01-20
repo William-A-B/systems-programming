@@ -45,9 +45,16 @@ uint32_t OS_initialiseTCB(OS_TCB_t * TCB, uint32_t * const stack, void (* const 
 /* 'Add task' */
 void OS_addTask(OS_TCB_t * const tcb);
 
-/* Notify all tasks in wait list and move them to pending list */
+/**
+ * @brief Notify all tasks in wait list and move them to pending list
+ */
 void OS_notifyAll(void);
 
+/**
+ * @brief Get the notification counter value
+ * 
+ * @return uint32_t - Notification counter value
+ */
 uint32_t get_notification_counter(void);
 
 /*========================*/
@@ -56,7 +63,16 @@ uint32_t get_notification_counter(void);
 
 #ifdef OS_INTERNAL
 
-/* Fixed Priority Round-robin scheduler */
+/**
+ * @brief Fixed Priority Round-robin scheduler
+ * Always operates on the highest priority task in the task list
+ * If there are multiple tasks with the same priority,
+ * it will operate on them in a round-robin fashion
+ * Checks to see if any tasks which were waiting or sleeping should
+ * be re-added to the task list
+ * 
+ * @return OS_TCB_t const* - The task to be run next
+ */
 OS_TCB_t const * _OS_schedule(void);
 
 typedef struct {

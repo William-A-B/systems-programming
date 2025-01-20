@@ -6,7 +6,14 @@
 static OS_semaphore_t queue_not_full_semaphore = OS_SEMAPHORE_STATIC_INITIALISER(QUEUE_SIZE, QUEUE_SIZE);
 static OS_semaphore_t queue_not_empty_semaphore = OS_SEMAPHORE_STATIC_INITIALISER(QUEUE_SIZE, 0);
 
-/* Add an element to the queue */
+/**
+ * @brief Add an element to the queue
+ * If the queue is full, the calling task will wait until there is space
+ * 
+ * @param queue - Queue to add data to
+ * @param data - Data to add to the queue
+ * @param mutex - Mutex to protect the queue from concurrent modification
+ */
 void queue_put(queue_t * queue, uint32_t *data, OS_mutex_t *mutex) {
 	// Obtain token to verify there is space in the queue
 	// If queue is full, calling task will wait
@@ -20,7 +27,14 @@ void queue_put(queue_t * queue, uint32_t *data, OS_mutex_t *mutex) {
 	OS_semaphore_release(&queue_not_empty_semaphore);
 }
 
-/* Retrieve an element from the queue */
+/**
+ * @brief Retrieve an element from the queue
+ * If the queue is empty, the calling task will wait until there is data available
+ * 
+ * @param queue - Queue to retrieve data from
+ * @param data - Pointer to store the data retrieved from the queue
+ * @param mutex - Mutex to protect the queue from concurrent modification
+ */
 void queue_get(queue_t * queue, uint32_t **data, OS_mutex_t *mutex) {
 	// Obtain token to verify that the queue isn't empty
 	// If empty calling task will wait

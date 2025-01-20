@@ -8,6 +8,9 @@
 
 uint32_t getPSR();
 uint32_t getCONTROL();
+/**
+ * @brief Report the state of the CPU
+ */
 void reportState(void);
 
 #endif /* MODE_UTILS_H */

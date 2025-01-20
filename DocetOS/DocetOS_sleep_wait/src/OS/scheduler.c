@@ -9,7 +9,19 @@
 #include <string.h>
 
 // SVC delegate function declarations
+/**
+ * @brief SVC Delegate to remove current task from task list
+ * and place it in the waiting list.
+ * Calls a context switch at the end of the function
+ * 
+ * @param stack - Contains the parameter for the task notification counter
+ */
 void _OS_wait_delegate(_OS_SVC_StackFrame_t const * const);
+/**
+ * @brief SVC Delegate to put the current task to sleep for a given time
+ * 
+ * @param stack - Contains the parameter for the task sleep time
+ */
 void _OS_sleep_delegate(_OS_SVC_StackFrame_t const * const);
 
 static uint32_t notification_counter = 0;
@@ -32,7 +44,12 @@ static _OS_tasklist_t wait_list = {.head = 0};
 static _OS_tasklist_t pending_list = {.head = 0};
 static _OS_tasklist_t sleep_list = {.head = 0};
 
-/* Add a task into the tasklist, sorted by priority */
+/**
+ * @brief Add a task into the tasklist, sorted by priority
+ * 
+ * @param list - Task list to add task to
+ * @param task - Task to add to list
+ */
 static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
 	// Insert at head, nothing in list
 	if (!(list->head)) {
@@ -68,7 +85,13 @@ static void list_add(_OS_tasklist_t *list, OS_TCB_t *task) {
 		list->head->prev = task;
 	}
 }
-/* Remove a task from a list */
+
+/**
+ * @brief Remove a task from a list
+ * 
+ * @param list - Task list to remove task from
+ * @param task - Task to remove from list
+ */
 static void list_remove(_OS_tasklist_t *list, OS_TCB_t *task) {
 	// Item at head of list
 	if (list->head == task) {
@@ -95,7 +118,14 @@ static void list_remove(_OS_tasklist_t *list, OS_TCB_t *task) {
 	task->next->prev = prev_task;
 }
 
-/* Add (push) given task onto the list provided */
+/**
+ * @brief Add (push) the given task onto the list provided
+ * Utilises atomic CMSIS operations to ensure operation 
+ * restarts if it is interrupted by another operation
+ * 
+ * @param list - Task list to add task to
+ * @param task - Task to add to list
+ */
 static void list_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
 	do {
 		OS_TCB_t *head = (OS_TCB_t *) __LDREXW ((uint32_t *)&(list->head));
@@ -103,7 +133,15 @@ static void list_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
 	} while (__STREXW ((uint32_t) task, (uint32_t *)&(list->head)));
 }
 
-/* Add (push) the given task onto the list provided, sorting it by sleep time */
+/**
+ * @brief Add (push) the given task onto the list provided,
+ * sorting it by sleep time
+ * Utilises atomic CMSIS operations to ensure operation
+ * restarts if it is interrupted by another operation
+ * 
+ * @param list - Task list to add task to
+ * @param task - Task to add to list
+ */
 static void list_sort_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
 	uint32_t failure = 1;
 	do {
@@ -137,7 +175,12 @@ static void list_sort_push_sl(_OS_tasklist_t *list, OS_TCB_t *task) {
 	} while (failure);
 }
 
-/* Pop top task off the list and return it */
+/**
+ * @brief Pop the top task off the list provided and return it
+ * 
+ * @param list - Task list to pop task from
+ * @return OS_TCB_t* - TCB task pointer popped from list
+ */
 static OS_TCB_t *list_pop_sl(_OS_tasklist_t *list) {
 	OS_TCB_t *head_task;
 	do {
@@ -150,6 +193,12 @@ static OS_TCB_t *list_pop_sl(_OS_tasklist_t *list) {
 	return head_task;
 }
 
+/**
+ * @brief SVC Delegate to put the current task to sleep for a given time
+ * Calls a context switch at the end of the function
+ * 
+ * @param stack - Contains the parameter for the task sleep time
+ */
 void _OS_sleep_delegate(_OS_SVC_StackFrame_t const * const stack) {
 	// Get the current running task's TCB
 	OS_TCB_t * const current_TCB = OS_currentTCB();
@@ -166,7 +215,13 @@ void _OS_sleep_delegate(_OS_SVC_StackFrame_t const * const stack) {
 	SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
 }
 
-/* Remove current task from task list and place it in waiting list */
+/**
+ * @brief SVC Delegate to remove current task from task list
+ * and place it in the waiting list.
+ * Calls a context switch at the end of the function
+ * 
+ * @param stack - Contains the parameter for the task notification counter
+ */
 void _OS_wait_delegate(_OS_SVC_StackFrame_t const * const stack) {
 	// If current notification counter is different to provided notification counter, then task shouldn't be held
 	if (stack->r0 != notification_counter) {
@@ -182,7 +237,9 @@ void _OS_wait_delegate(_OS_SVC_StackFrame_t const * const stack) {
 	SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
 }
 
-/* Notify all tasks in wait list and move them to pending list */
+/**
+ * @brief Notify all tasks in wait list and move them to pending list
+ */
 void OS_notifyAll(void) {
 	// While wait list still has tasks in it
 	// Remove all tasks and add them to the pending list
@@ -197,7 +254,16 @@ void OS_notifyAll(void) {
 	}
 }
 
-/* Fixed Priority Round-robin scheduler */
+/**
+ * @brief Fixed Priority Round-robin scheduler
+ * Always operates on the highest priority task in the task list
+ * If there are multiple tasks with the same priority,
+ * it will operate on them in a round-robin fashion
+ * Checks to see if any tasks which were waiting or sleeping should
+ * be re-added to the task list
+ * 
+ * @return OS_TCB_t const* - The task to be run next
+ */
 OS_TCB_t const * _OS_schedule(void) {
 
 	// While pending list is not empty, remove them and add them into the round robin
@@ -326,7 +392,11 @@ void _OS_taskExit_delegate(void) {
 	SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
 }
 
-/* Return the notification counter value */
+/**
+ * @brief Get the notification counter value
+ * 
+ * @return uint32_t - Notification counter value
+ */
 uint32_t get_notification_counter(void) {
 	return notification_counter;
 }
