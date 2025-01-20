@@ -3,7 +3,6 @@
 ".\objects\scheduler.o"
 ".\objects\os.o"
 ".\objects\os_asm.o"
-".\objects\sleep.o"
 ".\objects\mutex.o"
 ".\objects\semaphore.o"
 ".\objects\hardfault.o"
